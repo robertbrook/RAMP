@@ -1,0 +1,6 @@
+= Time.now.to_s
+
+- for photo in @photos
+  %p
+    = photo.inspect
+    = '<a href="http://www.flickr.com/photos/' + photo["owner"]["nsid"].to_s + '/' + photo["id"].to_s + '"><img src="http://farm' + photo["farm"] + '.static.flickr.com/' + photo["server"] + '/' + photo["id"].to_s + '_' + photo["secret"] + '.jpg" alt="' + photo["title"] + '"/></a>'
