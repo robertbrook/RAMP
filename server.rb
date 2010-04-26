@@ -8,10 +8,7 @@ MPS_DATA = File.new("./public/mps.csv").readlines
 
 
 get '/' do
-  random_number = rand(643)
-  while random_number == 0
-    random_number = rand(643)
-  end
+  random_number = rand(642)+1
   mp_data = MPS_DATA[random_number]
 
   unless mp_data
