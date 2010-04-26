@@ -33,9 +33,9 @@ class MP
     @@twfy_url = twfy_url
   end
   
-  def random_photo(mp_name = '')
+  def random_photo
     self.class.get("/v1/public/yql/", :query => {
-      :q => "select title,license,farm,id,secret,server,owner.username,owner.nsid from flickr.photos.info where photo_id in (select id from flickr.photos.search(1) where text='#{mp_name}')",
+      :q => "select title,license,farm,id,secret,server,owner.username,owner.nsid from flickr.photos.info where photo_id in (select id from flickr.photos.search(1) where text='#{self.name.gsub(" ", "")}')",
       :format => 'json',
       :callback => ''
      })
