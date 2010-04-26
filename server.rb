@@ -27,7 +27,7 @@ end
 get '/' do
   @mp = "vincecable"
   @photos = MPs.get_photos @mp
-  @name = quiz.readlines[rand(quiz.lineno)]
+  # @name = quiz.readlines[rand(quiz.lineno)]
   haml :index
 end
 
