@@ -1,38 +1,28 @@
 require 'rubygems'
 require 'sinatra'
-require 'open-uri'
 require 'json'
 require 'haml'
-require 'HTTParty'
+require 'lib/MP'
 
-MP_FILE = File.new("./public/mps.csv")
+MPS_DATA = File.new("./public/mps.csv").readlines
 
-module MP
-  include HTTParty
-  base_uri 'http://query.yahooapis.com'
-
-  def self.random_photo(mp_name = '')
-      get("/v1/public/yql/", :query => {
-        :q => "select title,license,farm,id,secret,server,owner.username,owner.nsid from flickr.photos.info where photo_id in (select id from flickr.photos.search(1) where text='#{mp_name}')",
-        :format => 'json',
-        :callback => ''
-       })
-    end
- 
-end
 
 get '/' do
-  @random_mp = MP_FILE.readlines[rand(644)].split(',')
-  @mp_name = @random_mp[1..2].join()
-  @mp_party = @random_mp[3]
-  @mp_constituency = @random_mp[4]
-  @mp_twfy_url = @random_mp[5]
-  @results = MP.random_photo(@mp_name)["query"]["results"]
+  random_number = rand(643)
+  mp_data = MPS_DATA[random_number]
+
+  unless mp_data
+    raise "#{random_number}"
+  end
+  
+  parts = mp_data.split(',')
+  @random_mp = MP.new(parts[1..2].join(), parts[3], parts[4], parts[5])
+  @results = @random_mp.random_photo(@random_mp.name)["query"]["results"]
   
   if @results
     @photos = @results
   else
-    @photos = ["Sorry: we couldn't find a photo of #{@mp_name}"]
+    @photos = ["Sorry: we couldn't find a photo of #{@random_mp.name}"]
   end
 
   haml :index
