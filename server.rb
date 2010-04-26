@@ -3,31 +3,38 @@ require 'sinatra'
 require 'open-uri'
 require 'json'
 require 'haml'
-require 'csv'
+require 'HTTParty'
 
-module MPs
-   class << self
-     
-     def x
-     end
-     
-    def flickr_api_url_fragment
-      "http://query.yahooapis.com/v1/public/yql?q=select%20title%2Clicense%2Cfarm%2Cid%2Csecret%2Cserver%2Cowner.username%2Cowner.nsid%20from%20flickr.photos.info%20where%20photo_id%20in%20(select%20id%20from%20flickr.photos.search(10)%20where%20text%3D"
+MP_FILE = File.new("./public/mps.csv")
+
+module MP
+  include HTTParty
+  base_uri 'http://query.yahooapis.com'
+
+  def self.random_photo(mp_name = '')
+      get("/v1/public/yql/", :query => {
+        :q => "select title,license,farm,id,secret,server,owner.username,owner.nsid from flickr.photos.info where photo_id in (select id from flickr.photos.search(1) where text='#{mp_name}')",
+        :format => 'json',
+        :callback => ''
+       })
     end
-        
-    def get_photos(mp = '')
-      uri = "#{flickr_api_url_fragment}" 
-      uri << "'#{ URI.escape(mp)}'" unless mp.empty?
-      uri << ")&format=json&callback="
-      JSON.parse(open(uri).read)["query"]["results"]["photo"]
-    end    
-  end
+ 
 end
 
 get '/' do
-  @mp = "vincecable"
-  @photos = MPs.get_photos @mp
-  # @name = quiz.readlines[rand(quiz.lineno)]
+  @random_mp = MP_FILE.readlines[rand(644)].split(',')
+  @mp_name = @random_mp[1..2].join()
+  @mp_party = @random_mp[3]
+  @mp_constituency = @random_mp[4]
+  @mp_twfy_url = @random_mp[5]
+  @results = MP.random_photo(@mp_name)["query"]["results"]
+  
+  if @results
+    @photos = @results
+  else
+    @photos = ["Sorry: we couldn't find a photo of #{@mp_name}"]
+  end
+
   haml :index
 end
 
