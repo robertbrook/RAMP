@@ -34,12 +34,14 @@ class MP
   end
   
   def random_photo(qty=1)
-    search_term = self.name + " MP"
+    name = self.name.gsub("Nicholas Clegg", "Nick Clegg")
+    name = name.gsub("Vincent Cable", "Vince Cable")
+    search_term = name.gsub(" ", "")
     
     images = do_search(search_term, qty)
      
     if !images["query"] || images["query"]["count"] == "0"
-      search_term = alternate_name + " MP"  
+      search_term = alternate_name.gsub(" ", "")
       images = do_search(search_term, qty)
     end
     
@@ -49,7 +51,7 @@ class MP
   private
     def do_search(search_term, qty)
       self.class.get("/v1/public/yql/", :query => {
-         :q => "select title,license,farm,id,secret,server,owner.username,owner.nsid, tags from flickr.photos.info where photo_id in (select id from flickr.photos.search(20) where text='#{search_term}') and tags.tag.content NOT MATCHES 'expenses|satire|flipping|thieves|thieft|safeseat|madness|robotdisaster|nazi' and owner.username != 'RinkRatz' and owner.username != 'brizzle born and bred' limit #{qty}",
+         :q => "select title,license,farm,id,secret,server,owner.username,owner.nsid, tags from flickr.photos.info where photo_id in (select id from flickr.photos.search(20) where tags\='#{search_term}') and tags.tag.content NOT MATCHES '.*expenses.*|satire|flipping|thieves|thief|safeseat|headlines|longboards|gravytrain|fillthecabinet|publicart|sculpture|madness|motorsports|adolfhitler|robotdisaster|nazi|music|emohoc|churchmonuments|universalpictures|memorial|sacredstitchclothing|concertphotography|usa' and owner.username NOT MATCHES 'RinkRatz|brizzle born and bred|neate photos|.ju:femaiz|bench808|UCL Conservative Society|Ed\303\272|Hollandi985|MalibuImages|patbrowndocumentary|Neikirk Image|BBC Radio 5 live|http://www.WorcesterParkBlog.org.uk|Moff' limit #{qty}",
          :format => 'json',
          :callback => ''
       })
@@ -61,6 +63,10 @@ class MP
       name = name.gsub("Nicholas", "Nick")
       name = name.gsub("Kenneth", "Ken")
       name = name.gsub("Thomas", "Tom")
+      name = name.gsub("Vincent", "Vince")
+      name = name.gsub("Edward", "Ed")
+      name = name.gsub("Gregory", "Greg")
+      
       name
     end
   
