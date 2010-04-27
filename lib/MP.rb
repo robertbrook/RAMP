@@ -36,10 +36,32 @@ class MP
   def random_photo(qty=1)
     search_term = self.name + " MP"
     
-    self.class.get("/v1/public/yql/", :query => {
-      :q => "select title,license,farm,id,secret,server,owner.username,owner.nsid from flickr.photos.info where photo_id in (select id from flickr.photos.search(#{qty}) where text='#{search_term}')",
-      :format => 'json',
-      :callback => ''
-     })
+    images = do_search(search_term, qty)
+     
+    if !images["query"] || images["query"]["count"] == "0"
+      search_term = alternate_name + " MP"  
+      images = do_search(search_term, qty)
+    end
+    
+    images
   end
+  
+  private
+    def do_search(search_term, qty)
+      self.class.get("/v1/public/yql/", :query => {
+         :q => "select title,license,farm,id,secret,server,owner.username,owner.nsid, tags from flickr.photos.info where photo_id in (select id from flickr.photos.search(20) where text='#{search_term}') and tags.tag.content NOT MATCHES 'expenses|satire|flipping|thieves|thieft|safeseat|madness|robotdisaster|nazi' and owner.username != 'RinkRatz' and owner.username != 'brizzle born and bred' limit #{qty}",
+         :format => 'json',
+         :callback => ''
+      })
+    end
+  
+    def alternate_name
+      name = self.name
+      name = name.gsub("Christopher", "Chris")
+      name = name.gsub("Nicholas", "Nick")
+      name = name.gsub("Kenneth", "Ken")
+      name = name.gsub("Thomas", "Tom")
+      name
+    end
+  
 end
