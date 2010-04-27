@@ -1,4 +1,7 @@
 %div
+
+="<a href='/?num=#{@number+=1}'>NEXT</a>"
+
 - if @results_count == 0
   %p
     Sorry: we couldn't find a photo of #{@random_mp.name}

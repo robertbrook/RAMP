@@ -8,11 +8,14 @@ MPS_DATA = File.new("./public/mps.csv").readlines
 
 
 get '/' do
-  random_number = rand(642)+1
-  mp_data = MPS_DATA[random_number]
+  @number = params[:num].to_i
+  unless @number
+    @number = rand(642)+1
+  end
+  mp_data = MPS_DATA[@number]
 
   unless mp_data
-    raise "#{random_number}"
+    raise "#{@number}"
   end
   
   parts = mp_data.split(',')
