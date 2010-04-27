@@ -17,12 +17,16 @@ get '/' do
   
   parts = mp_data.split(',')
   @random_mp = MP.new(parts[1..2].join(" ").squeeze(" "), parts[3], parts[4], parts[5])
-  @results = @random_mp.random_photo["query"]["results"]
   
-  if @results
-    @photos = @results
-  else
-    @photos = ["Sorry: we couldn't find a photo of #{@random_mp.name}"]
+  response = @random_mp.random_photo(3)["query"]
+  @results_count = response["count"].to_i
+  
+  if @results_count == 1
+    @photos = [response["results"]["photo"]]
+  end
+  
+  if @results_count > 1
+    @photos = response["results"]["photo"]
   end
 
   haml :index
