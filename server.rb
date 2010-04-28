@@ -2,6 +2,7 @@ require 'rubygems'
 require 'sinatra'
 require 'json'
 require 'haml'
+require 'fastercsv'
 require 'lib/MP'
 
 MPS_DATA = File.new("./public/mps.csv").readlines
@@ -14,14 +15,16 @@ get '/' do
   else
     @number = @number.to_i
   end
-  mp_data = MPS_DATA[@number]
-
-  unless mp_data
+  
+  data_line = MPS_DATA[@number]
+  
+  unless data_line
     raise "#{@number}"
   end
   
-  parts = mp_data.split(',')
-  @random_mp = MP.new(parts[1..2].join(" ").squeeze(" "), parts[3], parts[4], parts[5])
+  mp_data = FasterCSV::parse_line(data_line)
+  
+  @random_mp = MP.new(mp_data[1..2].join(" ").squeeze(" "), mp_data[3], mp_data[4], mp_data[5])
   
   response = @random_mp.random_photo(3)["query"]
   if response
@@ -40,6 +43,3 @@ get '/' do
 
   haml :index
 end
-
-
-
