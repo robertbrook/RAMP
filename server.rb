@@ -8,9 +8,11 @@ MPS_DATA = File.new("./public/mps.csv").readlines
 
 
 get '/' do
-  @number = params[:num].to_i
+  @number = params[:num]
   unless @number
     @number = rand(642)+1
+  else
+    @number = @number.to_i
   end
   mp_data = MPS_DATA[@number]
 
