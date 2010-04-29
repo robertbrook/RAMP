@@ -5,16 +5,25 @@ require 'haml'
 require 'fastercsv'
 require 'lib/MP'
 
+enable :sessions
+
 MPS_DATA = File.new("./public/mps.csv").readlines
 
 
 get '/' do
+  last_number = session[:num]
+  
   @number = params[:num]
   unless @number
     @number = rand(642)+1
+    while last_number == @number
+      @number = rand(642)+1
+    end
   else
     @number = @number.to_i
   end
+  
+  session[:num] = @number
   
   data_line = MPS_DATA[@number]
   
