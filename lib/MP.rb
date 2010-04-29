@@ -34,9 +34,9 @@ class MP
   end
   
   def random_photo(qty=1)
-    name = self.name.gsub("Nicholas Clegg", "Nick Clegg")
-    name = name.gsub("Vincent Cable", "Vince Cable")
-    search_term = name.gsub(" ", "")
+    search_name = self.name.gsub("Nicholas Clegg", "Nick Clegg")
+    search_name = search_name.gsub("Vincent Cable", "Vince Cable")
+    search_term = search_name.gsub(" ", "")
     
     images = do_search(search_term, qty)
      
@@ -51,7 +51,7 @@ class MP
   private
     def do_search(search_term, qty)
       self.class.get("/v1/public/yql/", :query => {
-         :q => "select title,license,farm,id,secret,server,owner.username,owner.nsid, tags from flickr.photos.info where photo_id in (select id from flickr.photos.search(20) where tags\='#{search_term}') and tags.tag.content NOT MATCHES '.*expenses.*|satire|flipping|thieves|thief|safeseat|headlines|longboards|gravytrain|fillthecabinet|publicart|sculpture|madness|motorsports|adolfhitler|robotdisaster|nazi|music|emohoc|churchmonuments|universalpictures|memorial|sacredstitchclothing|concertphotography|usa' and owner.username NOT MATCHES 'RinkRatz|brizzle born and bred|neate photos|.ju:femaiz|bench808|UCL Conservative Society|Ed\303\272|Hollandi985|MalibuImages|patbrowndocumentary|Neikirk Image|BBC Radio 5 live|http://www.WorcesterParkBlog.org.uk|Moff' limit #{qty}",
+         :q => "select title,license,farm,id,secret,server,owner.username,owner.nsid, tags from flickr.photos.info where photo_id in (select id from flickr.photos.search(20) where tags\='#{search_term}') and tags.tag.content NOT MATCHES '.*expenses.*|satire|flipping|thieves|thief|safeseat|headlines|longboards|gravytrain|fillthecabinet|publicart|sculpture|madness|motorsports|adolfhitler|robotdisaster|nazi|music|emohoc|churchmonuments|universalpictures|.*memorial|sacredstitchclothing|concertphotography|usa' and owner.username NOT MATCHES 'RinkRatz|brizzle born and bred|neate photos|.ju:femaiz|bench808|UCL Conservative Society|Ed\303\272|Hollandi985|MalibuImages|patbrowndocumentary|Neikirk Image|BBC Radio 5 live|http://www.WorcesterParkBlog.org.uk|Moff' limit #{qty}",
          :format => 'json',
          :callback => ''
       })
