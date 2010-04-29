@@ -8,6 +8,7 @@
     %li <strong>#{@random_mp.name}</strong>, #{@random_mp.party} MP for #{@random_mp.constituency}
     %li Fiona Carr, Liberal Democrat MP for Fife
     %li Adi Khan, Green MP for Basildon
+    %li <a href='#{@random_mp.twfy_url}'>Link to TWFY</a>
     %li <a href='/?num=#{@number+=1}'>Not enough information: try again</a>
   - for photo in @photos
     / =photo.inspect
