@@ -25,6 +25,16 @@ class MP
   def twfy_url
     @@twfy_url
   end
+  
+  def wikipedia_url
+    response = self.class.get("/v1/public/yql/", :query => {
+      :q => "select title, url from search.web where query='site:en.wikipedia.org #{self.name} MP #{self.constituency}' limit 1",
+      :format => 'json',
+      :callback => ''
+    })
+    
+    response["query"]["results"]["result"]["url"]
+  end
  
   def initialize(name, party, constituency, twfy_url)
     @@name = name
