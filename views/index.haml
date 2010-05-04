@@ -1,3 +1,9 @@
+%div.example_photo_stuff
+  - if @random_mp.wikipedia_photo != ''
+    %img{ :src => "#{@random_mp.wikipedia_photo}"}
+
+  %img{ :src => "#{@random_mp.twfy_photo}"}
+
 - if @results_count == 0
   %p
     Sorry: we couldn't find a photo of #{@random_mp.name}
