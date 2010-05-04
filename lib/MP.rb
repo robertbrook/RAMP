@@ -46,6 +46,26 @@ class MP
     
     response["query"]["results"]["result"]["url"]
   end
+  
+  def wikipedia_photo
+    response = self.class.get("/v1/public/yql/", :query => {
+      :q => "select * from html where url='#{wikipedia_url}' and xpath='//table [@class=\"infobox vcard\"]/tr/td/a/img'",
+      :format => 'json',
+      :callback => ''
+    })
+    
+    if !response["query"] || response["query"]["count"] == "0"
+      return ""
+    end
+    
+    if response["query"]["count"] == "1"
+      src = response["query"]["results"]["img"]["src"]
+    else 
+      src = response["query"]["results"]["img"][0]["src"]
+    end
+    
+    src    
+  end
  
   def initialize(name, party, constituency, twfy_url)
     @@name = name
