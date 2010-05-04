@@ -8,15 +8,16 @@ require 'lib/MP'
 enable :sessions
 
 MPS_DATA = File.new("./public/mps.csv").readlines
+MAX_NUMBER = MPS_DATA.length - 2
 
 get '/' do
   last_number = session[:num]
   
   @number = params[:num]
   unless @number
-    @number = rand(642)+1
+    @number = rand(MAX_NUMBER)+1
     while last_number == @number
-      @number = rand(642)+1
+      @number = rand(MAX_NUMBER)+1
     end
   else
     @number = @number.to_i

@@ -26,6 +26,17 @@ class MP
     @@twfy_url
   end
   
+  def twfy_photo    
+    response = self.class.get("/v1/public/yql/", :query => {
+      :q => "select * from html where url='#{self.twfy_url}' and xpath='//p[@class=\"person\"]/img'",
+      :format => 'json',
+      :callback => ''
+    })
+    
+    src = response["query"]["results"]["img"]["src"]
+    "http://www.theyworkforyou.com#{src}"
+  end
+  
   def wikipedia_url
     response = self.class.get("/v1/public/yql/", :query => {
       :q => "select title, url from search.web where query='site:en.wikipedia.org #{self.name} MP #{self.constituency}' limit 1",
