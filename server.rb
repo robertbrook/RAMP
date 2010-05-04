@@ -9,7 +9,6 @@ enable :sessions
 
 MPS_DATA = File.new("./public/mps.csv").readlines
 
-
 get '/' do
   last_number = session[:num]
   
@@ -51,4 +50,8 @@ get '/' do
   end
 
   haml :index
+end
+
+get "/about" do
+  haml :about
 end
