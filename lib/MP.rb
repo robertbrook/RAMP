@@ -64,6 +64,10 @@ class MP
       src = response["query"]["results"]["img"][0]["src"]
     end
     
+    if src.downcase =~ /replace_this_image/
+      src = ""
+    end
+    
     src    
   end
  
