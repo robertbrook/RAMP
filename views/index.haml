@@ -15,7 +15,8 @@
     %li <a href='#{@random_mp.wikipedia_url}'>Link to Wikipedia</a>
     %li <a href='/'>Not enough information: try again</a>
     %li <a href='/?num=#{@number+=1}'>DEBUG: Next MP</a>
+  #photos{:style=>"vertical-align:top;"}
   - for photo in @photos
     / =photo.inspect
-    %p.image
+    %span.image
       = '<a href="http://www.flickr.com/photos/' + photo["owner"]["nsid"].to_s + '/' + photo["id"].to_s + '"><img src="http://farm' + photo["farm"].to_s + '.static.flickr.com/' + photo["server"].to_s + '/' + photo["id"].to_s + '_' + photo["secret"].to_s + '.jpg" alt="' + photo["title"].to_s + '"/></a>'

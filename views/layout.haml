@@ -1,12 +1,12 @@
-!!!
+!!! 5
 %html
   %head
-    %title= "Recognise An MP"
+    %title RAMP
     %style
-      body{width:500px;margin:1em auto;font-family:verdana,sans-serif;}
   %body
-    %p
-      Nav bar here
-    = yield
-    %p
+    %header
+      %nav <strong>Recognise An MP?</strong> <a href="about">About RAMP</a>
+    %content
+      = yield
+    %footer
       <a href="http://www.theyworkforyou.com/mps/?f=csv">MPs list from MySociety</a>
