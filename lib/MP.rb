@@ -77,7 +77,11 @@ class MP
     @@constituency = constituency
     @@twfy_url = twfy_url
   end
-  
+
+  def lookup_flickr_photo_license
+    { 0 => "&copy; All rights reserved", 1 => "<a href='http://creativecommons.org/licenses/by-nc-sa/2.0/'>Some rights reserved</a>", 2 => "<a href='http://creativecommons.org/licenses/by-nc/2.0/'>Some rights reserved</a>", 3 => "<a href='http://creativecommons.org/licenses/by-nc-nd/2.0/'>Some rights reserved</a>", 4 => "<a href='http://creativecommons.org/licenses/by/2.0/'>Some rights reserved</a>", 5 => "<a href='http://creativecommons.org/licenses/by-sa/2.0/'>Some rights reserved</a>", 6 => "<a href='http://creativecommons.org/licenses/by-nd/2.0/' title='Stuff about this licence'>Some rights reserved</a>", 7 => "<a href='http://flickr.com/commons/usage/'>No known copyright restrictions</a>" }
+  end
+
   def random_photo(qty=1)
     search_name = self.name.gsub("Nicholas Clegg", "Nick Clegg")
     search_name = search_name.gsub("Vincent Cable", "Vince Cable")
