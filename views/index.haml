@@ -7,7 +7,13 @@
 
 - if @results_count == 0
   %p
-    We couldn't find a photo of #{@random_mp.name} on Flickr. Perhaps you might like to upload one? <a href='/'>Try another MP.</a> <a href='/?num=#{@number+=1}'>Show next MP.</a>
+    We couldn't find a photo of #{@random_mp.name} on Flickr. 
+  %p
+    Perhaps you might like to <a href="http://www.flickr.com/photos/upload/">upload one</a>?
+  %p
+    <a href='/'>Try another MP.</a>
+  %p
+    <a href='/?num=#{@number+=1}'>Show next MP.</a>
 - else
   .buttons
     %span.guess 
@@ -16,8 +22,7 @@
       %a{:href=>""} Fiona Carr, Liberal Democrat MP for Fife
     %span.guess
       %a{:href=>""} Adi Khan, Green MP for Basildon
-    %p <a href='#{@random_mp.twfy_url}'>Link to TWFY</a>
-    %p <a href='#{@random_mp.wikipedia_url}'>Link to Wikipedia</a>
+    %p Read more about this MP at <a href='#{@random_mp.twfy_url}'>TheyWorkForYou.com</a> or <a href='#{@random_mp.wikipedia_url}'>Wikipedia</a>.
     %p <a href='/'>Not enough information: try again</a>
     %p <a href='/?num=#{@number+=1}'>Show next MP</a>
   %table{:valign=>"top",:style=>"vertical-align:top;width:1500px;"}
