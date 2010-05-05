@@ -81,7 +81,7 @@ class MP
   def initialize(name, party, constituency, twfy_url)
     @@name = remove_initials(name)
     @@party = party
-    @@constituency = constituency
+    @@constituency = format_constituency_name(constituency)
     @@twfy_url = twfy_url
   end
 
@@ -132,5 +132,11 @@ class MP
       end
       name
     end
-        
+    
+    def format_constituency_name name
+      if name =~ /^([A-Za-z]*)\,\s*(City of|The)$/
+        name = "#{$2.strip} #{$1.strip}"
+      end
+      name
+    end
 end
