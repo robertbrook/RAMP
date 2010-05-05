@@ -79,7 +79,7 @@ class MP
   end
  
   def initialize(name, party, constituency, twfy_url)
-    @@name = name
+    @@name = remove_initials(name)
     @@party = party
     @@constituency = constituency
     @@twfy_url = twfy_url
@@ -125,5 +125,12 @@ class MP
       
       name
     end
-  
+    
+    def remove_initials name
+      if name =~ /^[A-Z][a-z]*( [A-Z] )[A-Z][a-z]*$/
+        name = name.gsub($1, " ")
+      end
+      name
+    end
+        
 end
