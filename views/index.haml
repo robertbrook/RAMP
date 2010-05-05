@@ -2,13 +2,14 @@
   - if @random_mp.wikipedia_photo != ''
     %img{ :src => "#{@random_mp.wikipedia_photo}"}
 
-  %img{ :src => "#{@random_mp.twfy_photo}"}
+  - if @random_mp.twfy_photo != ''
+    %img{ :src => "#{@random_mp.twfy_photo}"}
 
 - if @results_count == 0
   %p
     We couldn't find a photo of #{@random_mp.name} on Flickr. Perhaps you might like to upload one? <a href='/'>Try another MP.</a> <a href='/?num=#{@number+=1}'>Show next MP.</a>
 - else
-  %div
+  .buttons
     %span.guess 
       %a{:href=>""} <strong>#{@random_mp.name}</strong>, #{@random_mp.party} MP for #{@random_mp.constituency}
     %span.guess
