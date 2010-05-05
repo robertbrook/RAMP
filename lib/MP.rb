@@ -34,7 +34,14 @@ class MP
     })
     
     src = response["query"]["results"]["img"]["src"]
-    "http://www.theyworkforyou.com#{src}"
+    
+    if src =~ /unknownperson/
+      return ""
+    else
+      src = "http://www.theyworkforyou.com#{src}"
+    end
+    
+    src
   end
   
   def wikipedia_url
