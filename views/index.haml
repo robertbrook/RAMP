@@ -5,7 +5,7 @@
   - if @random_mp.twfy_photo != ''
     %img{ :src => "#{@random_mp.twfy_photo}"}
 
-- if @results_count == 0
+- if @photos.size == 0
   %p
     We couldn't find a photo of #{@random_mp.name} on Flickr. 
   %p

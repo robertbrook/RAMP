@@ -23,19 +23,7 @@ get '/' do
   session[:num] = @number
   
   @random_mp = setup_mp(@number)
-    
-  response = @random_mp.random_photo(3)["query"]
-  if response
-    @results_count = response["count"].to_i
-  else
-    @results_count = 0
-  end
-  
-  if @results_count == 1
-    @photos = [response["results"]["photo"]]
-  elsif @results_count > 1
-    @photos = response["results"]["photo"]
-  end
+  @photos = get_photos(@random_mp)
 
   haml :index
 end
@@ -58,4 +46,19 @@ private
     mp_data = FasterCSV::parse_line(data_line)
     random_mp = MP.new(mp_data[1..2].join(" ").squeeze(" "), mp_data[3], mp_data[4], mp_data[5])
     random_mp
+  end
+  
+  def get_photos(random_mp)
+    photos = []
+    response = random_mp.random_photo(3)["query"]
+    if response
+      results_count = response["count"].to_i
+    end
+
+    if results_count == 1
+      photos = [response["results"]["photo"]]
+    elsif results_count > 1
+      photos = response["results"]["photo"]
+    end
+    photos
   end
