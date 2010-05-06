@@ -29,7 +29,7 @@ get '/' do
     alt_num1 = random_number(@number)
     @alt_mp1 = setup_mp(alt_num1)
   
-    alt_num2 = random_number([alt_num1])
+    alt_num2 = random_number([alt_num1, @number])
     @alt_mp2 = setup_mp(alt_num2)
   end
 
