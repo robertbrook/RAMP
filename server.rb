@@ -24,6 +24,12 @@ get '/' do
   
   @random_mp = setup_mp(@number)
   @photos = get_photos(@random_mp)
+  
+  alt_num1 = random_number(@number)
+  @alt_mp1 = setup_mp(alt_num1)
+  
+  alt_num2 = random_number([alt_num1])
+  @alt_mp2 = setup_mp(alt_num2)
 
   haml :index
 end
@@ -33,19 +39,21 @@ get "/about" do
 end
 
 private
-  def random_number(last_number)
+  def random_number(avoid)
+    unless avoid.is_a?(Array)
+      avoid = [avoid]
+    end
     number = rand(MAX_NUMBER)+1
-    while last_number == number
+    while avoid.include?(number)
       number = rand(MAX_NUMBER)+1
     end
     number
   end
   
   def setup_mp(number)
-    data_line = MPS_DATA[number]  
+    data_line = MPS_DATA[number]
     mp_data = FasterCSV::parse_line(data_line)
-    random_mp = MP.new(mp_data[1..2].join(" ").squeeze(" "), mp_data[3], mp_data[4], mp_data[5])
-    random_mp
+    MP.new(mp_data[1..2].join(" ").squeeze(" "), mp_data[3], mp_data[4], mp_data[5])
   end
   
   def get_photos(random_mp)
