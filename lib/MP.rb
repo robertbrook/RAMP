@@ -2,29 +2,10 @@ require 'rubygems'
 require 'httparty'
 
 class MP
-  @@name = ""
-  @@party = ""
-  @@constituency = ""
-  @@twfy_url = ""
+  attr_reader :name, :party, :constituency, :twfy_url
   
   include HTTParty
   base_uri 'http://query.yahooapis.com'
- 
-  def name
-    @@name
-  end
- 
-  def party
-    @@party
-  end
-  
-  def constituency
-    @@constituency
-  end
-  
-  def twfy_url
-    @@twfy_url
-  end
   
   def twfy_photo    
     response = self.class.get("/v1/public/yql/", :query => {
@@ -79,10 +60,10 @@ class MP
   end
  
   def initialize(name, party, constituency, twfy_url)
-    @@name = remove_initials(name)
-    @@party = party
-    @@constituency = format_constituency_name(constituency)
-    @@twfy_url = twfy_url
+    @name = remove_initials(name)
+    @party = party
+    @constituency = format_constituency_name(constituency)
+    @twfy_url = twfy_url
   end
 
   def lookup_flickr_photo_license
