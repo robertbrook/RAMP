@@ -24,12 +24,14 @@ get '/' do
   
   @random_mp = setup_mp(@number)
   @photos = get_photos(@random_mp)
+
+  if @photos.size > 0
+    alt_num1 = random_number(@number)
+    @alt_mp1 = setup_mp(alt_num1)
   
-  alt_num1 = random_number(@number)
-  @alt_mp1 = setup_mp(alt_num1)
-  
-  alt_num2 = random_number([alt_num1])
-  @alt_mp2 = setup_mp(alt_num2)
+    alt_num2 = random_number([alt_num1])
+    @alt_mp2 = setup_mp(alt_num2)
+  end
 
   haml :index
 end
