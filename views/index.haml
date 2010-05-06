@@ -16,12 +16,20 @@
     <a href='/?num=#{@number+=1}'>Show next MP.</a>
 - else
   .buttons
-    %span.guess 
-      %a{:href=>""} <strong>#{@random_mp.name}</strong>, #{@random_mp.party} MP for #{@random_mp.constituency}
+    - pos = rand(3)
+    - if pos == 0
+      %span.guess 
+        %a{:href=>""} <strong>#{@random_mp.name}</strong>, #{@random_mp.party} MP for #{@random_mp.constituency}
     %span.guess
       %a{:href=>""} #{@alt_mp1.name}, #{@alt_mp1.party} MP for #{@alt_mp1.constituency}
+    - if pos == 1
+      %span.guess 
+        %a{:href=>""} <strong>#{@random_mp.name}</strong>, #{@random_mp.party} MP for #{@random_mp.constituency}
     %span.guess
       %a{:href=>""} #{@alt_mp2.name}, #{@alt_mp2.party} MP for #{@alt_mp2.constituency}
+    - if pos == 2
+      %span.guess 
+        %a{:href=>""} <strong>#{@random_mp.name}</strong>, #{@random_mp.party} MP for #{@random_mp.constituency}
     %p Read more about this MP at <a href='#{@random_mp.twfy_url}'>TheyWorkForYou.com</a> or <a href='#{@random_mp.wikipedia_url}'>Wikipedia</a>.
     %p <a href='/'>Not enough information: try again</a>
     %p <a href='/?num=#{@number+=1}'>Show next MP</a>
