@@ -8,7 +8,7 @@ require 'lib/MP'
 enable :sessions
 
 MPS_DATA = File.new("./public/mps.csv").readlines
-MAX_NUMBER = MPS_DATA.length - 2
+MAX_NUMBER = MPS_DATA.length
 
 get '/' do
   last_number = session[:num]
