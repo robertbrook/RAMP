@@ -13,7 +13,7 @@
     - @mps.each do |mp|
       -count += 1
       .guess 
-        %a{:href=>"javascript:show_answer(#{count})"} <strong>#{mp.name}</strong>, #{mp.party} MP for #{mp.constituency}
+        %a{:href=>"javascript:toggle_answer(#{count})"} <strong>#{mp.name}</strong>, #{mp.party} MP for #{mp.constituency}
         %div{:id => "answer#{count}"}
           - if mp.wikipedia_photo == '' && mp.twfy_photo == ''
             Sorry, no photo available
