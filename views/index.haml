@@ -1,10 +1,3 @@
-%div.example_photo_stuff
-  - if @random_mp.wikipedia_photo != ''
-    %img{ :src => "#{@random_mp.wikipedia_photo}"}
-
-  - if @random_mp.twfy_photo != ''
-    %img{ :src => "#{@random_mp.twfy_photo}"}
-
 - if @photos.size == 0
   %p
     We couldn't find a photo of #{@random_mp.name}, #{@random_mp.party} MP for #{@random_mp.constituency} on Flickr. 
@@ -18,21 +11,46 @@
   .buttons
     - pos = rand(3)
     - if pos == 0
-      %span.guess 
-        %a{:href=>""} <strong>#{@random_mp.name}</strong>, #{@random_mp.party} MP for #{@random_mp.constituency}
-    %span.guess
-      %a{:href=>""} #{@alt_mp1.name}, #{@alt_mp1.party} MP for #{@alt_mp1.constituency}
+      .guess 
+        %a{:href=>"javascript:show_answer(1)"} <strong>#{@random_mp.name}</strong>, #{@random_mp.party} MP for #{@random_mp.constituency}
+        #answer1
+          - if @random_mp.wikipedia_photo != ''
+            %img{ :src => "#{@random_mp.wikipedia_photo}"}
+          - if @random_mp.twfy_photo != ''
+            %img{ :src => "#{@random_mp.twfy_photo}"}
+    .guess
+      %a{:href=>"javascript:show_answer(4)"} #{@alt_mp1.name}, #{@alt_mp1.party} MP for #{@alt_mp1.constituency}
+      #answer4
+        - if @alt_mp1.wikipedia_photo != ''
+          %img{ :src => "#{@alt_mp1.wikipedia_photo}"}
+        - if @alt_mp1.twfy_photo != ''
+          %img{ :src => "#{@alt_mp1.twfy_photo}"}
     - if pos == 1
       %span.guess 
-        %a{:href=>""} <strong>#{@random_mp.name}</strong>, #{@random_mp.party} MP for #{@random_mp.constituency}
-    %span.guess
-      %a{:href=>""} #{@alt_mp2.name}, #{@alt_mp2.party} MP for #{@alt_mp2.constituency}
+        %a{:href=>"javascript:show_answer(1)"} <strong>#{@random_mp.name}</strong>, #{@random_mp.party} MP for #{@random_mp.constituency}
+        #answer1
+          - if @random_mp.wikipedia_photo != ''
+            %img{ :src => "#{@random_mp.wikipedia_photo}"}
+          - if @random_mp.twfy_photo != ''
+            %img{ :src => "#{@random_mp.twfy_photo}"}
+    .guess
+      %a{:href=>"javascript:show_answer(5)"} #{@alt_mp2.name}, #{@alt_mp2.party} MP for #{@alt_mp2.constituency}
+      #answer5
+        - if @alt_mp2.wikipedia_photo != ''
+          %img{ :src => "#{@alt_mp2.wikipedia_photo}"}
+        - if @alt_mp2.twfy_photo != ''
+          %img{ :src => "#{@alt_mp2.twfy_photo}"}
     - if pos == 2
-      %span.guess 
-        %a{:href=>""} <strong>#{@random_mp.name}</strong>, #{@random_mp.party} MP for #{@random_mp.constituency}
-    %p Read more about this MP at <a href='#{@random_mp.twfy_url}'>TheyWorkForYou.com</a> or <a href='#{@random_mp.wikipedia_url}'>Wikipedia</a>.
-    %p <a href='/'>Not enough information: try again</a>
-    %p <a href='/?num=#{@number+=1}'>Show next MP</a>
+      .guess 
+        %a{:href=>"javascript:show_answer(1)"} <strong>#{@random_mp.name}</strong>, #{@random_mp.party} MP for #{@random_mp.constituency}
+        #answer1
+          - if @random_mp.wikipedia_photo != ''
+            %img{ :src => "#{@random_mp.wikipedia_photo}"}
+          - if @random_mp.twfy_photo != ''
+            %img{ :src => "#{@random_mp.twfy_photo}"}
+  %p Read more about this MP at <a href='#{@random_mp.twfy_url}'>TheyWorkForYou.com</a> or <a href='#{@random_mp.wikipedia_url}'>Wikipedia</a>.
+  %p <a href='/'>Not enough information: try again</a>
+  %p <a href='/?num=#{@number+=1}'>Show next MP</a>
   %table{:valign=>"top",:style=>"vertical-align:top;width:1500px;"}
     %tr
     - for photo in @photos
