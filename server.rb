@@ -27,10 +27,23 @@ get '/' do
 
   if @photos.size > 0
     alt_num1 = random_number(@number)
-    @alt_mp1 = setup_mp(alt_num1)
+    alt_mp1 = setup_mp(alt_num1)
   
     alt_num2 = random_number([alt_num1, @number])
-    @alt_mp2 = setup_mp(alt_num2)
+    alt_mp2 = setup_mp(alt_num2)
+  end
+  
+  pos = rand(3)
+  
+  @mps = []
+  0.upto(2) do |i|
+    if i == pos
+      @mps << @random_mp
+    elsif @mps.include?(alt_mp1)
+      @mps << alt_mp2
+    else
+      @mps << alt_mp1
+    end
   end
 
   haml :index
