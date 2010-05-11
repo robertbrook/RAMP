@@ -15,18 +15,21 @@
       .guess 
         %a{:href=>"javascript:show_answer(#{count})"} <strong>#{mp.name}</strong>, #{mp.party} MP for #{mp.constituency}
         %div{:id => "answer#{count}"}
+          - if mp.wikipedia_photo == '' && mp.twfy_photo == ''
+            Sorry, no photo available
           - if mp.wikipedia_photo != ''
             %img{ :src => "#{mp.wikipedia_photo}"}
           - if mp.twfy_photo != ''
             %img{ :src => "#{mp.twfy_photo}"}
-  more about this MP at <a href='#{@random_mp.twfy_url}'>TheyWorkForYou.com</a> or <a href='#{@random_mp.wikipedia_url}'>Wikipedia</a>.
-  %p <a href='/'>Not enough information: try again</a>
-  %p <a href='/?num=#{@number+=1}'>Show next MP</a>
-  %table{:valign=>"top",:style=>"vertical-align:top;width:1500px;"}
-    %tr
-    - for photo in @photos
-      / = photo.inspect
-      %td.image
-        = '<a href="http://www.flickr.com/photos/' + photo["owner"]["nsid"].to_s + '/' + photo["id"].to_s + '"><img src="http://farm' + photo["farm"].to_s + '.static.flickr.com/' + photo["server"].to_s + '/' + photo["id"].to_s + '_' + photo["secret"].to_s + '.jpg" alt="' + photo["title"].to_s + '"/></a>'
-        %br
-        = @random_mp.lookup_flickr_photo_license[photo["license"].to_i]
+  .stuff
+    more about this MP at <a href='#{@random_mp.twfy_url}'>TheyWorkForYou.com</a> or <a href='#{@random_mp.wikipedia_url}'>Wikipedia</a>.
+    %p <a href='/'>Not enough information: try again</a>
+    %p <a href='/?num=#{@number+=1}'>Show next MP</a>
+    %table{:valign=>"top",:style=>"vertical-align:top;width:1500px;"}
+      %tr
+      - for photo in @photos
+        / = photo.inspect
+        %td.image
+          = '<a href="http://www.flickr.com/photos/' + photo["owner"]["nsid"].to_s + '/' + photo["id"].to_s + '"><img src="http://farm' + photo["farm"].to_s + '.static.flickr.com/' + photo["server"].to_s + '/' + photo["id"].to_s + '_' + photo["secret"].to_s + '.jpg" alt="' + photo["title"].to_s + '"/></a>'
+          %br
+          = @random_mp.lookup_flickr_photo_license[photo["license"].to_i]
