@@ -1,12 +1,6 @@
 - if @photos.size == 0
-  %p
-    We couldn't find a photo of #{@random_mp.name}, #{@random_mp.party} MP for #{@random_mp.constituency} on Flickr. 
-  %p
-    Perhaps you might like to <a href="http://www.flickr.com/photos/upload/">upload one</a>?
-  %p
-    <a href='/'>Try another MP.</a>
-  %p
-    <a href='/?num=#{@number+=1}'>Show next MP.</a>
+  %p There isn't a photo tagged of #{@random_mp.name}, #{@random_mp.party} MP for #{@random_mp.constituency} on Flickr. You can <a href="http://www.flickr.com/photos/upload/">upload a photo</a>, or tag a public photo with that MP's name.
+  %p <a href='/?num=#{@number+=1}'>Show next MP.</a>
 - else
   .buttons
     - count = 0
@@ -23,15 +17,14 @@
             %img{ :src => "#{mp.twfy_photo}"}
   .stuff
     more about this MP at <a href='#{@random_mp.twfy_url}'>TheyWorkForYou.com</a> or <a href='#{@random_mp.wikipedia_url}'>Wikipedia</a>.
-    %p <a href='/'>Not enough information: try again</a>
     %p <a href='/?num=#{@number+=1}'>Show next MP</a>
-    %table{:valign=>"top",:style=>"vertical-align:top;width:1500px;"}
-      %tr
+    %div
+      %center
       - for photo in @photos
         / = photo.inspect
-        %td.image
+        %figure
           = '<a href="http://www.flickr.com/photos/' + photo["owner"]["nsid"].to_s + '/' + photo["id"].to_s + '"><img src="http://farm' + photo["farm"].to_s + '.static.flickr.com/' + photo["server"].to_s + '/' + photo["id"].to_s + '_' + photo["secret"].to_s + '.jpg" alt="' + photo["title"].to_s + '"/></a>'
-          %br
-          = "Photo credit: #{photo["owner"]["username"]}"
-          %br
-          = @random_mp.lookup_flickr_photo_license[photo["license"].to_i]
+          %figcaption{:rel => "license"}
+            = @random_mp.lookup_flickr_photo_license[photo["license"].to_i]
+            &mdash;
+            = photo["owner"]["username"]
