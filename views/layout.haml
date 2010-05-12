@@ -2,11 +2,11 @@
 %html
   %head
     %title Recognise An MP?
-    %style body{margin:1em;font-family:"Helvetica Neue",Helvetica,verdana,sans-serif}.stuff{float:left}a{text-decoration:none;}h1{font-weight:normal;}content{line-height:140%;}.buttons{width: 100%;clear:both;float:left;}.guess{border:1pt solid grey;padding:1em;margin:1em;width:20em;float:left;}#answer1{display:none}#answer2{display:none}#answer3{display:none}
+    %style body{border:1pt solid gray;background-color:white;width:500px;margin:1em auto;font-family:"Helvetica Neue",Helvetica,verdana,sans-serif}.stuff{float:left}a{text-decoration:none;}h1{font-weight:normal;}content{background-color:white;line-height:140%;}header{}.buttons{}.guess{}#answer1{display:none}#answer2{display:none}#answer3{display:none}
     %script{:type => "text/javascript", :src => "script/ramp.js"}
   %body
     %header
-      %nav <a href="about">About RAMP</a>
+      %nav <abbr title="Recognise An MP?">RAMP</abbr> helps you <strong>Recognise An MP</strong> <a href="about">More about this site</a>
     %content
       = yield
     %footer
