@@ -14,6 +14,10 @@ class MP
       :callback => ''
     })
     
+    unless response
+      return ""
+    end
+    
     src = response["query"]["results"]["img"]["src"]
     
     if src =~ /unknownperson/
