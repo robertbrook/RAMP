@@ -14,6 +14,10 @@ get '/env' do
   "<h1>" + ENV["RACK_ENV"] + "</h1>"
 end
 
+get '/favicion.ico' do
+  ""
+end
+
 get '/' do
   @number = params[:num]
   if @number
