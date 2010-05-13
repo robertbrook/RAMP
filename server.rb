@@ -10,6 +10,10 @@ enable :sessions
 MPS_DATA = File.new("./public/mps.csv").readlines
 MAX_NUMBER = MPS_DATA.length - 1
 
+get '/env' do
+  "<h1>" + ENV["RACK_ENV"] + "</h1>"
+end
+
 get '/' do
   last_number = session[:num]
 
