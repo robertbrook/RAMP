@@ -18,24 +18,21 @@ get '/favicon.ico' do
   ""
 end
 
-get '/favicion.ico' do
-  ""
-end
-
 get '/' do
+  session[:page_nums] = session[:mp_nums]
   @number = params[:num]
   if @number
     @number = @number.to_i
   else
-    @number = random_mp_num()
+    @number = random_mp_num(true)
   end
   
   @random_mp = setup_mp(@number)
   @photos = get_photos(@random_mp)
 
   if @photos.size > 0
-    alt_mp1 = setup_mp(random_mp_num())
-    alt_mp2 = setup_mp(random_mp_num())
+    alt_mp1 = setup_mp(random_mp_num(false))
+    alt_mp2 = setup_mp(random_mp_num(false))
   end
   
   pos = rand(3)
@@ -50,6 +47,7 @@ get '/' do
       @mps << alt_mp1
     end
   end
+  session[:page_nums] = session[:mp_nums]
 
   haml :index
 end
@@ -59,23 +57,21 @@ get "/about" do
 end
 
 private
-  def random_mp_num
+  def random_mp_num write_back
     unless session[:mp_nums]
       session[:mp_nums] = (1..MAX_NUMBER).to_a
     end
-    session[:mp_nums] = session[:mp_nums].sort_by{rand}
-    session[:mp_nums].pop
-  end
-
-  def random_number(avoid)
-    unless avoid.is_a?(Array)
-      avoid = [avoid]
+    unless session[:page_nums]
+      session[:page_nums] = (1..MAX_NUMBER).to_a
     end
-    number = rand(MAX_NUMBER)+1
-    while avoid.include?(number)
-      number = rand(MAX_NUMBER)+1
+    numbers = session[:page_nums]
+    numbers = numbers.sort_by{rand}
+    random = numbers.pop
+    if write_back
+      session[:mp_nums] = numbers
     end
-    number
+    session[:page_nums] = numbers
+    return random
   end
   
   def setup_mp(number)
