@@ -76,6 +76,8 @@ private
     response = random_mp.random_photo(3)["query"]
     if response
       results_count = response["count"].to_i
+    else
+      results_count = 0
     end
 
     if results_count == 1
