@@ -19,9 +19,8 @@ class Party
         mp_data = FasterCSV::parse_line(line)
         party = mp_data[3]
         unless list.include?(party)
-          if party != "-"
-            list << party
-          end
+          party = "Speaker" if party == "-"
+          list << party
         end
       end
       row_count += 1
