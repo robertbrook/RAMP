@@ -11,7 +11,11 @@ MPS_DATA = File.new("./public/mps.csv").readlines
 MAX_NUMBER = MPS_DATA.length - 1
 
 get '/env' do
-  "<h1>" + ENV["RACK_ENV"] + "</h1>"
+  "<code>" + ENV.inspect + "</code>"
+end
+
+get '/favicon.ico' do
+  ""
 end
 
 get '/favicion.ico' do
