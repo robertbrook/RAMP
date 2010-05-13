@@ -15,9 +15,12 @@ get '/env' do
 end
 
 get '/' do
-  @number = random_mp_num()
-  
-  session[:num] = @number
+  @number = params[:num]
+  if @number
+    @number = @number.to_i
+  else
+    @number = random_mp_num()
+  end
   
   @random_mp = setup_mp(@number)
   @photos = get_photos(@random_mp)
