@@ -35,8 +35,12 @@ class MP
       :format => 'json',
       :callback => ''
     })
-    
-    response["query"]["results"]["result"]["url"]
+
+    if response
+      return response["query"]["results"]["result"]["url"]
+    else
+      return ""
+    end
   end
   
   def wikipedia_photo
