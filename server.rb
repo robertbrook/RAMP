@@ -11,14 +11,7 @@ MPS_DATA = File.new("./public/mps.csv").readlines
 MAX_NUMBER = MPS_DATA.length - 1
 
 get '/' do
-  last_number = session[:num]
-
-  @number = params[:num]
-  if @number
-    @number = @number.to_i
-  else
-    @number = random_number(last_number)
-  end
+  @number = random_mp_num()
   
   session[:num] = @number
   
@@ -26,11 +19,8 @@ get '/' do
   @photos = get_photos(@random_mp)
 
   if @photos.size > 0
-    alt_num1 = random_number(@number)
-    alt_mp1 = setup_mp(alt_num1)
-  
-    alt_num2 = random_number([alt_num1, @number])
-    alt_mp2 = setup_mp(alt_num2)
+    alt_mp1 = setup_mp(random_mp_num())
+    alt_mp2 = setup_mp(random_mp_num())
   end
   
   pos = rand(3)
@@ -54,6 +44,14 @@ get "/about" do
 end
 
 private
+  def random_mp_num
+    unless session[:mp_nums]
+      session[:mp_nums] = (1..MAX_NUMBER).to_a
+    end
+    session[:mp_nums] = session[:mp_nums].sort_by{rand}
+    session[:mp_nums].pop
+  end
+
   def random_number(avoid)
     unless avoid.is_a?(Array)
       avoid = [avoid]
