@@ -5,4 +5,4 @@ disable :run
 
 require 'server'
 
-run Sinatra.application
+run Sinatra::Application
