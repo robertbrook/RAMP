@@ -1,0 +1,10 @@
+.vcard
+  .vcard_text
+    .vcard_name
+      = "Name: #{@mp['name']}"
+    .vcard_constituency
+      = "Constituency: #{@mp['constituency']}"
+    .vcard_party
+      = "Party: #{@mp['party']}"
+  .vcard_photo
+    %img{:src => @mp['twfy_photo']}

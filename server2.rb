@@ -10,9 +10,6 @@ enable :sessions
 
 CACHE = Memcached.new
 
-mp = MP.new("David Cameron", "Conservative", "Witney", "http://www.theyworkforyou.com/mp/david_cameron/witney")
-CACHE.add("mp_test", mp.to_json)
-
 MPS_DATA = File.new("./public/mps.csv").readlines
 MAX_NUMBER = MPS_DATA.length - 1
 
@@ -25,7 +22,13 @@ get '/favicon.ico' do
 end
 
 get '/' do
-  response = CACHE.get("mp_test")
-  test = JSON.parse(response)
-  "#{test['name']}, #{test['party']} MP for #{test['constituency']}<br />twfy_photo: #{test['twfy_photo']}<br />wikipedia_photo: #{test['wikipedia_photo']}"
+  begin
+    response = CACHE.get("mp_test")
+  rescue
+    mp = MP.new("David Cameron", "Conservative", "Witney", "http://www.theyworkforyou.com/mp/david_cameron/witney")
+    CACHE.add("mp_test", mp.to_json)
+    response = mp
+  end
+  @mp = JSON.parse(response)
+  haml :vcard
 end
