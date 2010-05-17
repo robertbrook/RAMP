@@ -2,7 +2,7 @@ require 'rubygems'
 require 'httparty'
 
 class MP
-  attr_reader :name, :party, :constituency, :twfy_url
+  attr_reader :name, :party, :constituency, :twfy_url, :number
   
   include HTTParty
   base_uri 'http://query.yahooapis.com'
@@ -67,11 +67,12 @@ class MP
     src    
   end
  
-  def initialize(name, party, constituency, twfy_url)
+  def initialize(name, party, constituency, twfy_url, number)
     @name = remove_initials(name)
     @party = party
     @constituency = format_constituency_name(constituency)
     @twfy_url = twfy_url
+    @number = number
   end
 
   def to_json

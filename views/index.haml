@@ -1,13 +1,17 @@
 - if @photos.size == 0
   %p There isn't a photo tagged of #{@random_mp.name}, #{@random_mp.party} MP for #{@random_mp.constituency} on Flickr. You can <a href="http://www.flickr.com/photos/upload/">upload a photo</a>, or tag a public photo with that MP's name.
-  %p <a href='/?num=#{@number+=1}'>Show next MP.</a>
+  %p <a href='/'>Ok, show me another</a>
 - else
   .buttons
     - count = 0
     - @mps.each do |mp|
       -count += 1
       .guess 
-        %a{:href=>"javascript:toggle_answer(#{count})"} <strong>#{mp.name}</strong>, #{mp.party} MP for #{mp.constituency}
+        %form{ :method => 'post', :action => '/answer' }
+          %a{:href=>"javascript:toggle_answer(#{count})"} <strong>#{mp.name}</strong>, #{mp.party} MP for #{mp.constituency}
+          %input{ :type => 'submit', :name => 'answer', :value => "choose"}
+          %input{ :type => 'hidden', :name => 'guess', :value => "#{mp.number}" }
+          %input{ :type => 'hidden', :name => 'status', :value => "#{@status}" }
         %div{:id => "answer#{count}"}
           - if mp.wikipedia_photo == '' && mp.twfy_photo == ''
             Sorry, no photo available
@@ -17,7 +21,7 @@
             %img{ :src => "#{mp.twfy_photo}"}
   .stuff
     more about this MP at <a href='#{@random_mp.twfy_url}'>TheyWorkForYou.com</a> or <a href='#{@random_mp.wikipedia_url}'>Wikipedia</a>.
-    %p <a href='/?num=#{@number+=1}'>Show next MP</a>
+    %p <a href='/'>Pass, show me another</a>
     %div
       %center
       - for photo in @photos
