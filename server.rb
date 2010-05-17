@@ -21,8 +21,6 @@ end
 get '/' do
   session[:page_nums] = session[:mp_nums]
   
-  session[:fubar] = []
-  
   @number = params[:num]
   if @number
     @number = @number.to_i
@@ -58,8 +56,6 @@ get '/' do
         @mps << alt_mp1
       end
     end
-  
-    session[:mps] = @mps
   
     status = @mps.collect { |x| x.number }
     status.delete(@number)
@@ -106,7 +102,6 @@ private
       session[:mp_nums] = numbers
     end
     session[:page_nums] = numbers
-    session[:fubar] << random
     return random
   end
   
