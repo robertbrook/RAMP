@@ -1,20 +1,38 @@
 require 'rubygems'
-require 'httparty'
+require 'json'
+require 'yaml'
+require 'oauth'
 
 class MP
   attr_reader :name, :party, :constituency, :twfy_url, :number
   
-  include HTTParty
-  base_uri 'http://query.yahooapis.com'
+  def self.get_yql_access_token
+    if ENV['RACK_ENV'] && ENV['RACK_ENV'] == 'production'
+      key = ENV['YQL_KEY']
+      secret = ENV['YQL_SECRET']
+    else
+      yql_conf = YAML.load(File.read('config/virtualserver/YQL.yml'))
+      key = yql_conf[:YQL_KEY]
+      secret = yql_conf[:YQL_SECRET]
+    end
+    
+    consumer = OAuth::Consumer.new \
+      key,
+      secret,
+      :site => "http://query.yahooapis.com"
+
+    OAuth::AccessToken.new(consumer)
+  end
+  
+  TOKEN = get_yql_access_token
   
   def twfy_photo
-    response = self.class.get("/v1/public/yql/", :query => {
-      :q => "select * from html where url='#{self.twfy_url}' and xpath='//p[@class=\"person\"]/img'",
-      :format => 'json',
-      :callback => ''
-    })
+    query = "select * from html where url='#{self.twfy_url}' and xpath='//p[@class=\"person\"]/img'"
+    result = TOKEN.request(:get, "/v1/yql?q=#{OAuth::Helper.escape(query)}&callback=&format=json")
     
-    unless response
+    response = JSON.parse(result.body)
+    
+    if response.nil? or response.is_a?(String)
       return ""
     end
     
@@ -30,25 +48,23 @@ class MP
   end
   
   def wikipedia_url
-    response = self.class.get("/v1/public/yql/", :query => {
-      :q => "select title, url from search.web where query='site:en.wikipedia.org #{self.name} MP #{self.constituency}' limit 1",
-      :format => 'json',
-      :callback => ''
-    })
+    query = "select title, url from search.web where query='site:en.wikipedia.org #{self.name} MP #{self.constituency}' limit 1"
+    result = TOKEN.request(:get, "/v1/yql?q=#{OAuth::Helper.escape(query)}&callback=&format=json")
+    
+    response = JSON.parse(result.body)
 
-    if response
-      return response["query"]["results"]["result"]["url"]
-    else
+    if response.nil? or response.is_a?(String)
       return ""
+    else
+      return response["query"]["results"]["result"]["url"]
     end
   end
   
   def wikipedia_photo
-    response = self.class.get("/v1/public/yql/", :query => {
-      :q => "select * from html where url='#{wikipedia_url}' and xpath='//table [@class=\"infobox vcard\"]/tr/td/a/img'",
-      :format => 'json',
-      :callback => ''
-    })
+    query = "select * from html where url='#{wikipedia_url}' and xpath='//table [@class=\"infobox vcard\"]/tr/td/a/img'"
+    result = TOKEN.request(:get, "/v1/yql?q=#{OAuth::Helper.escape(query)}&callback=&format=json")
+    
+    response = JSON.parse(result.body)
     
     if !response["query"] || response["query"]["count"] == "0"
       return ""
@@ -100,11 +116,10 @@ class MP
   
   private
     def do_search(search_term, qty)
-      self.class.get("/v1/public/yql/", :query => {
-         :q => "select title,license,farm,id,secret,server,owner.username,owner.nsid, tags from flickr.photos.info where photo_id in (select id from flickr.photos.search(20) where tags\='#{search_term}') and tags.tag.content NOT MATCHES '.*expenses.*|satire|flipping|thieves|thief|safeseat|headlines|longboards|gravytrain|fillthecabinet|publicart|sculpture|madness|motorsports|adolfhitler|robotdisaster|nazi|music|emohoc|churchmonuments|universalpictures|.*memorial|sacredstitchclothing|concertphotography|usa' and owner.username NOT MATCHES 'RinkRatz|brizzle born and bred|neate photos|.ju:femaiz|bench808|UCL Conservative Society|Ed\303\272|Hollandi985|MalibuImages|patbrowndocumentary|Neikirk Image|BBC Radio 5 live|http://www.WorcesterParkBlog.org.uk|Moff' limit #{qty}",
-         :format => 'json',
-         :callback => ''
-      })
+      query = "select title,license,farm,id,secret,server,owner.username,owner.nsid, tags from flickr.photos.info where photo_id in (select id from flickr.photos.search(20) where tags\='#{search_term}') and tags.tag.content NOT MATCHES '.*expenses.*|satire|flipping|thieves|thief|safeseat|headlines|longboards|gravytrain|fillthecabinet|publicart|sculpture|madness|motorsports|adolfhitler|robotdisaster|nazi|music|emohoc|churchmonuments|universalpictures|.*memorial|sacredstitchclothing|concertphotography|usa' and owner.username NOT MATCHES 'RinkRatz|brizzle born and bred|neate photos|.ju:femaiz|bench808|UCL Conservative Society|Ed\303\272|Hollandi985|MalibuImages|patbrowndocumentary|Neikirk Image|BBC Radio 5 live|http://www.WorcesterParkBlog.org.uk|Moff' limit #{qty}"
+      
+      result = TOKEN.request(:get, "/v1/yql?q=#{OAuth::Helper.escape(query)}&callback=&format=json")
+      response = JSON.parse(result.body)
     end
   
     def alternate_name
