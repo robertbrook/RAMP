@@ -25,7 +25,7 @@ get '/' do
   begin
     response = CACHE.get("mp_test")
   rescue
-    mp = MP.new("David Cameron", "Conservative", "Witney", "http://www.theyworkforyou.com/mp/david_cameron/witney")
+    mp = MP.new("David Cameron", "Conservative", "Witney", "http://www.theyworkforyou.com/mp/david_cameron/witney", 96)
     json = mp.to_json
     CACHE.add("mp_test", json)
     response = json
