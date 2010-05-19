@@ -36,6 +36,7 @@ get '/' do
   
   session[:correct] = 0 unless session[:correct]
   session[:wrong] = 0 unless session[:wrong]
+  session[:passes] = session[:attempts] - (session[:correct] + session[:wrong] + 1)
   
   @random_mp = setup_mp(@number)
   @photos = get_photos(@random_mp)
@@ -79,6 +80,8 @@ post "/answer" do
   else
     session[:wrong] +=1
   end
+  
+  session[:passes] = session[:attempts] - (session[:correct] + session[:wrong])
   
   haml :answer
 end
