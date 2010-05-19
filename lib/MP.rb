@@ -48,10 +48,12 @@ class MP
   end
   
   def wikipedia_url
-    query = "select title, url from search.web where query='site:en.wikipedia.org #{self.name} MP #{self.constituency}' limit 1"
+    query = "select title, url from search.web where query='site:en.wikipedia.org #{self.name.gsub("'", "%27")} MP #{self.constituency}' limit 1"
     result = TOKEN.request(:get, "/v1/yql?q=#{OAuth::Helper.escape(query)}&callback=&format=json")
     
     response = JSON.parse(result.body)
+
+    raise response.inspect
 
     if response.nil? or response.is_a?(String)
       return ""
