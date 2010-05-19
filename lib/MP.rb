@@ -53,8 +53,6 @@ class MP
     
     response = JSON.parse(result.body)
 
-    raise response.inspect
-
     if response.nil? or response.is_a?(String)
       return ""
     else
