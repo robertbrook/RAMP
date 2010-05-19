@@ -39,6 +39,7 @@ get '/' do
     session[:attempts] += 1
   end
   
+  session[:last] = "" unless session[:last]
   session[:correct] = 0 unless session[:correct]
   session[:wrong] = 0 unless session[:wrong]
   session[:passes] = session[:attempts] - (session[:correct] + session[:wrong] + 1)
@@ -82,13 +83,16 @@ post "/answer" do
   
   @mp = setup_mp(@answer.to_i)
   
-  if @guess == @answer
-    session[:correct] +=1
-  else
-    session[:wrong] +=1
+  unless session[:last] == @status
+    if @guess == @answer
+      session[:correct] +=1
+    else
+      session[:wrong] +=1
+    end
+    session[:passes] = session[:attempts] - (session[:correct] + session[:wrong])
   end
   
-  session[:passes] = session[:attempts] - (session[:correct] + session[:wrong])
+  session[:last] = @status
   
   haml :answer
 end

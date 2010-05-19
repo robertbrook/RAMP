@@ -22,6 +22,7 @@ get '/favicon.ico' do
 end
 
 get '/' do
+  session[:last] = "" unless session[:last]
   session[:attempts] = 0 unless session[:attempts]
   session[:correct] = 0 unless session[:correct]
   session[:wrong] = 0 unless session[:wrong]
