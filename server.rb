@@ -18,6 +18,11 @@ get '/favicon.ico' do
   ""
 end
 
+get '/stylesheets/styles.css' do
+  content_type 'text/css', :charset => 'utf-8'
+  sass :styles
+end
+
 get '/' do
   session[:page_nums] = session[:mp_nums]
   
