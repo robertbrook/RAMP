@@ -9,7 +9,7 @@
   %body
     %header
       #score
-        #{session[:attempts]} photos, #{session[:attempts] - (session[:correct] + session[:wrong])} passes, #{session[:correct]} correct
+        #{session[:attempts]} photos, #{session[:passes]} passes, #{session[:correct]} correct
       %nav <abbr title="Recognise An MP?"><strong>RAMP</strong></abbr> helps you Recognise An MP. <a href="about">More about this site</a>.
     %content
       = yield
