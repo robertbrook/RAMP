@@ -82,6 +82,7 @@ post "/answer" do
   @guess = params[:guess]
   
   @mp = setup_mp(@answer.to_i)
+  @chosen = setup_mp(@guess.to_i)
   
   unless session[:last] == @status
     if @guess == @answer
