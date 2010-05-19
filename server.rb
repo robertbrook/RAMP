@@ -80,6 +80,8 @@ post "/answer" do
   @answer = @status.last
   @guess = params[:guess]
   
+  @mp = setup_mp(@answer.to_i)
+  
   if @guess == @answer
     session[:correct] +=1
   else

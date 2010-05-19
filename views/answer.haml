@@ -1,3 +1,21 @@
-You guessed #{@guess} the answer was #{@answer}
+- if @guess == @answer
+  %h2 Correct!
+- else
+  %h2 Sorry!
+
+%p
+  It was #{@mp.name}
+
+%p
+  .vcard
+    .vcard_text
+      .vcard_name
+        = "#{@mp.name}"
+      .vcard_constituency
+        = "MP for #{@mp.constituency}"
+      .vcard_party
+        = "#{@mp.party}"
+    .vcard_photo
+      %img{:src => @mp.twfy_photo}
 
 %p <a href='/'>Ok, show me another</a>
