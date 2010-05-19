@@ -36,6 +36,10 @@ class MP
       return ""
     end
     
+    unless response["query"]["results"]
+      return ""
+    end
+    
     src = response["query"]["results"]["img"]["src"]
     
     if src =~ /unknownperson/
