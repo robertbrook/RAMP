@@ -10,10 +10,7 @@ end
 
 task :cron do
   cache = Memcached.new()
-  
-  #clear the cache
-  cache.flush()
-  
+    
   mp_data = File.new("public/mps.csv").readlines
   row_count = 0
   
@@ -27,7 +24,14 @@ task :cron do
       mp = MP.new(mp_data[1..2].join(" ").squeeze(" "), party, mp_data[4], mp_data[5], row_count)
       
       json = mp.to_json
-      cache.add("mp_#{row_count}", json)
+      
+      #try to find the data
+      cached_mp = nil
+      begin
+        cached_mp = cache.get("mp_#{row_count}")
+      rescue Memcached::NotFound
+        cache.add("mp_#{row_count}", json)
+      end
     end
     row_count += 1
   end
