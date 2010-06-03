@@ -4,7 +4,7 @@ require 'yaml'
 require 'oauth'
 
 class MP
-  attr_reader :name, :party, :constituency, :twfy_url, :number
+  attr_reader :name, :party, :constituency, :twfy_url, :number, :fymp_url
   
   def self.get_yql_access_token
     if ENV['RACK_ENV'] && ENV['RACK_ENV'] == 'production'
@@ -116,6 +116,15 @@ class MP
     end
     
     images
+  end
+  
+  def fymp_url
+    constituency = self.constituency.downcase
+    constituency.gsub!(" ","-")
+    constituency.gsub!(",","")
+    constituency.gsub!("(","")
+    constituency.gsub!(")","")
+    link = "http://findyourmp.parliament.uk/constituencies/#{constituency}"
   end
   
   private
