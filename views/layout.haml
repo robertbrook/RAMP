@@ -9,7 +9,9 @@
     %header
       #score
         #{session[:attempts]} photos, #{session[:passes]} passes, #{session[:correct]} correct
-      %nav <abbr title="Recognise An MP?"><strong>RAMP</strong></abbr> helps you Recognise An MP. <a href="about">More about this site</a>.
+      %nav <abbr title="Recognise An MP?"><strong>RAMP</strong></abbr> helps you Recognise An MP.
+      - if request.path_info != "/about"
+        <a href="about">More about this site</a>.
     %content
       = yield
     %footer
