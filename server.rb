@@ -3,12 +3,14 @@ require 'sinatra'
 require 'json'
 require 'haml'
 require 'fastercsv'
+require 'memcached'
 require 'lib/MP'
 
 enable :sessions
 
 MPS_DATA = File.new("./public/mps.csv").readlines
 MAX_NUMBER = MPS_DATA.length - 1
+CACHE = Memcached.new()
 
 get '/env' do
   "<code>" + ENV.inspect + "</code>"
@@ -47,24 +49,55 @@ get '/' do
   @random_mp = setup_mp(@number)
   @photos = get_photos(@random_mp)
 
+  begin
+    mp_cache = CACHE.get("mp_#{@number}")
+    @random_mp_json = JSON.parse(mp_cache)
+  rescue Memcached::NotFound
+    @random_mp_json = JSON.parse(@random_mp.to_json)
+    CACHE.add("mp_#{@number}", JSON.generate(@random_mp_json))
+  end
+
+  status = []
+
   if @photos.size > 0
-    alt_mp1 = setup_mp(random_mp_num(false))
-    alt_mp2 = setup_mp(random_mp_num(false))
+    mp1_number = random_mp_num(false)
+    alt_mp1 = setup_mp(mp1_number)
+    alt_mp1_json = ""
+    begin
+      mp_cache = CACHE.get("mp_#{mp1_number}")
+      alt_mp1_json = JSON.parse(mp_cache)
+    rescue Memcached::NotFound
+      alt_mp1_json = JSON.parse(alt_mp1.to_json)
+      CACHE.add("mp_#{mp1_number}", JSON.generate(alt_mp1_json))
+    end
+    
+    mp2_number = random_mp_num(false)
+    alt_mp2 = setup_mp(mp2_number)
+    alt_mp2_json = ""
+    begin
+      mp_cache = CACHE.get("mp_#{mp2_number}")
+      alt_mp2_json = JSON.parse(mp_cache)
+    rescue Memcached::NotFound
+      alt_mp2_json = JSON.parse(alt_mp2.to_json)
+      CACHE.add("mp_#{mp2_number}", JSON.generate(alt_mp2_json))
+    end
   
     pos = rand(3)
   
     @mps = []
     0.upto(2) do |i|
       if i == pos
-        @mps << @random_mp
-      elsif @mps.include?(alt_mp1)
-        @mps << alt_mp2
+        @mps << @random_mp_json
+        status << @number
+      elsif @mps.include?(alt_mp1_json)
+        @mps << alt_mp2_json
+        status << mp2_number
       else
-        @mps << alt_mp1
+        @mps << alt_mp1_json
+        status << mp1_number
       end
     end
   
-    status = @mps.collect { |x| x.number }
     status.delete(@number)
     status.reverse!
     status << @number
@@ -83,6 +116,15 @@ post "/answer" do
   
   @mp = setup_mp(@answer.to_i)
   @chosen = setup_mp(@guess.to_i)
+  
+  begin
+    mp_cache = CACHE.get("mp_#{@answer}")
+    @mp_json = JSON.parse(mp_cache)
+  rescue Memcached::NotFound
+    @mp_json = JSON.parse(@mp.to_json)
+    CACHE.add("mp_#{@answer}", JSON.generate(@mp_json))
+  end
+  
   
   unless session[:last] == @status
     if @guess == @answer

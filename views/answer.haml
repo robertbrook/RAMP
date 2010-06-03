@@ -6,25 +6,25 @@
     You chose #{@chosen.name}
 
 %p
-  It was #{@mp.name}
+  It was #{@mp_json['name']}
 
 %p
   .vcard
     .vcard_name
-      = "#{@mp.name}"
+      = "#{@mp_json['name']}"
     .vcard_constituency
-      = "MP for #{@mp.constituency}"
+      = "MP for #{@mp_json['constituency']}"
     .vcard_text
       .vcard_party
-        = "#{@mp.party}"
+        = "#{@mp_json['party']}"
       
       %p
         Read more about this MP:
         %br
-        %a{:href => "#{@mp.twfy_url}" } They Work For You
+        %a{:href => "#{@mp_json['twfy_url']}" } They Work For You
         %br
-        %a{:href => "#{@mp.wikipedia_url}" } Wikipedia
+        %a{:href => "#{@mp_json['wikipedia_url']}" } Wikipedia
     .vcard_photo
-      %img{:src => @mp.twfy_photo}
+      %img{:src => @mp_json['twfy_photo']}
 
 %p <a href='/'>Ok, show me another</a>

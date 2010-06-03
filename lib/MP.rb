@@ -96,7 +96,7 @@ class MP
   end
 
   def to_json
-    %Q|{"name":"#{name}","party":"#{party}","constituency":"#{constituency}","twfy_url":"#{twfy_url}","twfy_photo":"#{twfy_photo}","wikipedia_url":"#{wikipedia_url}","wikipedia_photo":"#{wikipedia_photo}"}|
+    %Q|{"name":"#{name}","number":#{number},"party":"#{party}","constituency":"#{constituency}","twfy_url":"#{twfy_url}","twfy_photo":"#{twfy_photo}","wikipedia_url":"#{wikipedia_url}","wikipedia_photo":"#{wikipedia_photo}"}|
   end
 
   def lookup_flickr_photo_license
