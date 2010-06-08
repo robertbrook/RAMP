@@ -1,4 +1,3 @@
-!!! 5
 %html
   %head
     %title Recognise An MP?
@@ -6,8 +5,7 @@
   %body
     %h1 Recognise An MP?
     %p #{session[:attempts]} photos, #{session[:passes]} passes, #{session[:correct]} correct
-    - if request.path_info != "/about"
-      <a href="about">More about this site</a>.
     = yield
-    
+    - if request.path_info != "/about"
+      %p <a href="about">More about this site</a>.    
       
