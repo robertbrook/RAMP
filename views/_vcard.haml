@@ -1,0 +1,18 @@
+.vcard
+  .vcard_name
+    = "#{@mp_json['name']}"
+  .vcard_constituency
+    = "MP for #{@mp_json['constituency']}"
+  .vcard_text
+    .vcard_party
+      = "#{@mp_json['party']}"
+    
+    %p
+      Read more about this MP:
+      %br
+      %a{:href => "#{@mp_json['twfy_url']}" } They Work For You
+      %br
+      %a{:href => "#{@mp_json['wikipedia_url']}" } Wikipedia
+  .vcard_photo
+    - if @mp_json['twfy_photo'] != ''
+      %img{:src => @mp_json['twfy_photo']}
