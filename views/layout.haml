@@ -3,16 +3,11 @@
   %head
     %title Recognise An MP?
     %link{:type => "text/css", :rel => "stylesheet", :href => "/stylesheets/styles.css"}
-    %script{:type => "text/javascript", :src => "script/ramp.js"}
-    <!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
   %body
-    %header
-      #score
-        #{session[:attempts]} photos, #{session[:passes]} passes, #{session[:correct]} correct
-      %nav <abbr title="Recognise An MP?"><strong>RAMP</strong></abbr> helps you Recognise An MP.
-      - if request.path_info != "/about"
-        <a href="about">More about this site</a>.
-    %content
-      = yield
-    %footer
+    %h1 Recognise An MP?
+    %p #{session[:attempts]} photos, #{session[:passes]} passes, #{session[:correct]} correct
+    - if request.path_info != "/about"
+      <a href="about">More about this site</a>.
+    = yield
+    
       
