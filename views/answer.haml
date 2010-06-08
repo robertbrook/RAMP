@@ -9,6 +9,6 @@
   It was #{@mp_json['name']}
 
 %p
-  =haml(:_vcard, :layout => false)
+  =partial(:vcard, :layout => false, :collection => [@mp_json] )
 
 %p <a href='/'>Ok, show me another</a>
