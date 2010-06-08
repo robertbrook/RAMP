@@ -6,8 +6,11 @@ require 'sass'
 require 'fastercsv'
 require 'memcached'
 require 'lib/MP'
+require 'lib/partials'
 
 enable :sessions
+
+helpers Sinatra::Partials
 
 MPS_DATA = File.new("./public/mps.csv").readlines
 MAX_NUMBER = MPS_DATA.length - 1

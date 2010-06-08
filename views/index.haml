@@ -1,6 +1,9 @@
 - if @photos.size == 0
-  %p There isn't a photo tagged of #{@random_mp_json["name"]}, #{@random_mp_json["party"]} MP for #{@random_mp_json["constituency"]} on Flickr. You can <a href="http://www.flickr.com/photos/upload/">upload a photo</a>, or tag a public photo with that MP's name.
-  %p <a href='/'>Ok, show me another</a>
+  #notfound
+    %p There isn't a photo tagged of <strong>#{@random_mp_json["name"]}</strong> on Flickr. You can <a href="http://www.flickr.com/photos/upload/">upload a photo</a>, or tag a public photo with that MP's name.
+    %p
+      =partial(:vcard, :layout => false, :collection => [@random_mp_json] )
+    %p <a href='/'>Ok, show me another</a>
 - else
   .buttons
     - count = 0
