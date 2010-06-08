@@ -6,7 +6,7 @@ require 'sass'
 require 'fastercsv'
 require 'memcached'
 require 'lib/MP'
-require 'lib/partials'
+require 'helpers/partials'
 
 enable :sessions
 
