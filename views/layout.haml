@@ -6,6 +6,7 @@
     %h1 Recognise An MP?
     %p #{session[:attempts]} photos, #{session[:passes]} passes, #{session[:correct]} correct
     = yield
-    - if request.path_info != "/about"
-      %p <a href="about">More about this site</a>.    
+    #footer
+      - if request.path_info != "/about"
+        %p <a href="about">More about this site</a>.    
       
