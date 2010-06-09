@@ -8,6 +8,13 @@ Spec::Rake::SpecTask.new do |t|
   t.spec_opts = ['--colour', '--format=specdoc']
 end
 
+desc "Flushes the memcached data"
+task :clear_memcache do
+  cache = Memcached.new()
+  cache.flush()
+end
+
+desc "Cron job to populate memcached"
 task :cron do
   cache = Memcached.new()
   
