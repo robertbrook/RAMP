@@ -21,10 +21,6 @@ get '/env' do
   "<code>" + ENV.inspect + "</code>"
 end
 
-get '/favicon.ico' do
-  ""
-end
-
 get '/stylesheets/styles.css' do
   content_type 'text/css', :charset => 'utf-8'
   sass :styles

@@ -1,18 +1,21 @@
 .vcard
-  .vcard_name
+  .n
     = "#{vcard['name']}"
-  .vcard_constituency
-    = "MP for #{vcard['constituency']}"
-  .vcard_text
-    .vcard_party
+  .role.title
+    MP
+  .adr
+    .region.locality
+      = "#{vcard['constituency']}"
+  .org
+    .organisation-name
       = "#{vcard['party']}"
-    
+  
     %p
       Read more about this MP:
       %br
       %a{:href => "#{vcard['twfy_url']}" } They Work For You
       %br
       %a{:href => "#{vcard['wikipedia_url']}" } Wikipedia
-  .vcard_photo
-    - if vcard['twfy_photo'] != ''
-      %img{:src => vcard['twfy_photo']}
+      - if vcard['twfy_photo'] != ''
+        %p
+          %img.photo{:src => vcard['twfy_photo']}
