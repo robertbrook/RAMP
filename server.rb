@@ -5,6 +5,7 @@ require 'haml'
 require 'sass'
 require 'fastercsv'
 require 'memcached'
+require 'mongo'
 require 'lib/MP'
 require 'helpers/partials'
 
@@ -27,6 +28,23 @@ end
 get '/stylesheets/styles.css' do
   content_type 'text/css', :charset => 'utf-8'
   sass :styles
+end
+
+get '/mongotest' do
+  mongo_conf = YAML.load(File.read('config/virtualserver/mongo.yml'))
+  db_name = mongo_conf[:db]
+  db_server = mongo_conf[:server]
+  db_port = mongo_conf[:port]
+  db_user = mongo_conf[:user]
+  db_pass = mongo_conf[:pass]
+  
+  db = Mongo::Connection.new(db_server, db_port).db(db_name)
+  auth = db.authenticate(db_user, db_pass)
+  coll = db.collection("flags")
+  
+  @rows = coll.find("name" => /lor/i)
+  
+  haml :mongotest, :layout => false
 end
 
 get '/' do

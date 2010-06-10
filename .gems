@@ -1,3 +1,6 @@
 fastercsv
 memcached
 oauth
+mongo
+bson
+bson_ext
