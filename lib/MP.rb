@@ -159,8 +159,6 @@ class MP
       
       query = "select title,license,farm,id,secret,server,owner.username,owner.nsid, tags from flickr.photos.info where photo_id in (select id from flickr.photos.search(20) where tags\='#{search_term}' and id NOT MATCHES '#{blocked_photos}') and tags.tag.content NOT MATCHES '#{blocked_tags}' and owner.nsid NOT MATCHES '#{blocked_users}' limit #{qty}"
       
-      raise query
-      
       result = TOKEN.request(:get, "/v1/yql?q=#{OAuth::Helper.escape(query)}&callback=&format=json")
       response = JSON.parse(result.body)
     end
