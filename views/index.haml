@@ -23,3 +23,9 @@
             = @random_mp.lookup_flickr_photo_license[photo["license"].to_i]
             &mdash;
             = photo["owner"]["username"]
+          %form{ :method => 'post', :action => '/' }
+            %input{ :type => 'submit', :name => 'flag', :value => 'MP not in photo' }
+            %input{ :type => 'hidden', :name => 'photo_id', :value => photo["id"]}
+            %input{ :type => 'hidden', :name => 'user_id', :value => photo["owner"]["nsid"]}
+            %input{ :type => 'hidden', :name => 'user_name', :value => photo["owner"]["username"]}
+            %input{ :type => 'hidden', :name => 'status', :value => "#{@status}" }
