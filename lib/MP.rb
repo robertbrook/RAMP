@@ -130,7 +130,7 @@ class MP
   def random_photo(qty=1)
     search_name = self.name.gsub("Nicholas Clegg", "Nick Clegg")
     search_name = search_name.gsub("Vincent Cable", "Vince Cable")
-    search_term = search_name.gsub(" ", "")
+    search_term = search_name
     
     images = do_search(search_term, qty)
      
@@ -157,7 +157,9 @@ class MP
       blocked_users = get_blocked_user_id_list()
       blocked_tags = get_blocked_tag_list()
       
-      query = "select title,license,farm,id,secret,server,owner.username,owner.nsid, tags from flickr.photos.info where photo_id in (select id from flickr.photos.search(20) where tags\='#{search_term}' and id NOT MATCHES '#{blocked_photos}') and tags.tag.content NOT MATCHES '#{blocked_tags}' and owner.nsid NOT MATCHES '#{blocked_users}' limit #{qty}"
+      tag_term = search_term.gsub(" " ,"")
+      
+      query = "select title,license,farm,id,secret,server,owner.username,owner.nsid, tags from flickr.photos.info where photo_id in (select id from flickr.photos.search(30) where text\='#{search_term}' and id NOT MATCHES '#{blocked_photos}') and tags.tag.content NOT MATCHES '#{blocked_tags}' and owner.nsid NOT MATCHES '#{blocked_users}' and (title like '%#{search_term}%' or description like '%#{search_term}%' or tags.tag.content='#{tag_term}' or tags.tag.content='#{tag_term.downcase()}') limit #{qty}"
       
       result = TOKEN.request(:get, "/v1/yql?q=#{OAuth::Helper.escape(query)}&callback=&format=json")
       response = JSON.parse(result.body)
