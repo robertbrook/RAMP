@@ -166,13 +166,13 @@ class MP
     def get_blocked_tag_list
       coll = MONGO_DB.collection("blacklist")
       results = coll.find("tags" => /.*/)
-      results.first["tags"].join("|")
+      results.next_document["tags"].join("|")
     end
     
     def get_blocked_user_id_list
       coll = MONGO_DB.collection("blacklist")
       results = coll.find("users" => /.*/)
-      results.first["users"].join("|")
+      results.next_document["users"].join("|")
     end
     
     def get_blocked_photo_list(mp_name)
