@@ -24,7 +24,31 @@ class MP
     OAuth::AccessToken.new(consumer)
   end
   
-  TOKEN = get_yql_access_token
+  TOKEN = get_yql_access_token()
+  
+  def self.get_mongo_connection
+    if ENV['RACK_ENV'] && ENV['RACK_ENV'] == 'production'
+      db_name = ENV['MONGO_DB']
+      db_server = ENV['MONGO_SERVER']
+      db_port = ENV['MONGO_PORT']
+      db_user = ENV['MONGO_USER']
+      db_pass = ENV['MONGO_PASS']
+    else    
+      mongo_conf = YAML.load(File.read('config/virtualserver/mongo.yml'))
+      db_name = mongo_conf[:db]
+      db_server = mongo_conf[:server]
+      db_port = mongo_conf[:port]
+      db_user = mongo_conf[:user]
+      db_pass = mongo_conf[:pass]
+    end
+
+    db = Mongo::Connection.new(db_server, db_port).db(db_name)
+    db.authenticate(db_user, db_pass)
+    
+    return db
+  end
+  
+  MONGO_DB = get_mongo_connection()
   
   def twfy_photo
     query = "select * from html where url='#{self.twfy_url}' and xpath='//p[@class=\"person\"]/img'"
@@ -129,10 +153,33 @@ class MP
   
   private
     def do_search(search_term, qty)
-      query = "select title,license,farm,id,secret,server,owner.username,owner.nsid, tags from flickr.photos.info where photo_id in (select id from flickr.photos.search(20) where tags\='#{search_term}') and tags.tag.content NOT MATCHES '.*expenses.*|satire|flipping|thieves|thief|safeseat|headlines|longboards|gravytrain|fillthecabinet|publicart|sculpture|madness|motorsports|adolfhitler|robotdisaster|nazi|music|emohoc|churchmonuments|universalpictures|.*memorial|sacredstitchclothing|concertphotography|usa' and owner.username NOT MATCHES 'RinkRatz|brizzle born and bred|neate photos|.ju:femaiz|bench808|UCL Conservative Society|Ed\303\272|Hollandi985|MalibuImages|patbrowndocumentary|Neikirk Image|BBC Radio 5 live|http://www.WorcesterParkBlog.org.uk|Moff' limit #{qty}"
+      blocked_photos = get_blocked_photo_list(search_term)
+      blocked_users = get_blocked_user_id_list()
+      blocked_tags = get_blocked_tag_list()
+      
+      query = "select title,license,farm,id,secret,server,owner.username,owner.nsid, tags from flickr.photos.info where photo_id in (select id from flickr.photos.search(20) where tags\='#{search_term}' and id NOT MATCHES '#{blocked_photos}') and tags.tag.content NOT MATCHES '#{blocked_tags}' and owner.nsid NOT MATCHES '#{blocked_users}' limit #{qty}"
       
       result = TOKEN.request(:get, "/v1/yql?q=#{OAuth::Helper.escape(query)}&callback=&format=json")
       response = JSON.parse(result.body)
+    end
+    
+    def get_blocked_tag_list
+      coll = MONGO_DB.collection("blacklist")
+      results = coll.find("tags" => /.*/)
+      results.first["tags"].join("|")
+    end
+    
+    def get_blocked_user_id_list
+      coll = MONGO_DB.collection("blacklist")
+      results = coll.find("users" => /.*/)
+      results.first["users"].join("|")
+    end
+    
+    def get_blocked_photo_list(mp_name)
+      coll = MONGO_DB.collection("blacklist")
+      blocked_outright = coll.find({"photo_id" => /.*/, "name" => nil}).collect { |x| x["photo_id"] }
+      blocked_for_mp = blocked_outright = coll.find({"photo_id" => /.*/, "name" => mp_name}).collect { |x| x["photo_id"] }
+      (blocked_outright | blocked_for_mp).join("|")
     end
   
     def alternate_name
