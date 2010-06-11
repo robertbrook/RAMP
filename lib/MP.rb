@@ -159,6 +159,8 @@ class MP
       
       query = "select title,license,farm,id,secret,server,owner.username,owner.nsid, tags from flickr.photos.info where photo_id in (select id from flickr.photos.search(20) where tags\='#{search_term}' and id NOT MATCHES '#{blocked_photos}') and tags.tag.content NOT MATCHES '#{blocked_tags}' and owner.nsid NOT MATCHES '#{blocked_users}' limit #{qty}"
       
+      raise query
+      
       result = TOKEN.request(:get, "/v1/yql?q=#{OAuth::Helper.escape(query)}&callback=&format=json")
       response = JSON.parse(result.body)
     end
@@ -178,7 +180,8 @@ class MP
     def get_blocked_photo_list(mp_name)
       coll = MONGO_DB.collection("blacklist")
       blocked_outright = coll.find({"photo_id" => /.*/, "name" => nil}).collect { |x| x["photo_id"] }
-      blocked_for_mp = blocked_outright = coll.find({"photo_id" => /.*/, "name" => mp_name}).collect { |x| x["photo_id"] }
+      blocked_for_mp = coll.find({"photo_id" => /.*/, "name" => mp_name}).collect { |x| x["photo_id"] }
+      
       (blocked_outright | blocked_for_mp).join("|")
     end
   
