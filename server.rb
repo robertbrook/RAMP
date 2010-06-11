@@ -28,6 +28,7 @@ end
 
 get '/' do
   session[:page_nums] = session[:mp_nums]
+  session[:flagged] = ""
   
   @number = params[:num]
   if @number
@@ -111,6 +112,15 @@ get '/' do
 end
 
 post "/" do
+  session[:page_nums] = session[:mp_nums]
+  @flagged = session[:flagged]
+  
+  if @flagged
+    @flagged = @flagged.split("-")
+  else
+    @flagged = []
+  end
+  
   status = params[:status].split("-")
   @number = status.last.to_i
   
@@ -122,7 +132,9 @@ post "/" do
   user_name = params[:user_name]
   mp_name = @random_mp.name
   
-  flag_photo(photo_id, user_id, user_name, mp_name)  
+  @flagged << photo_id
+  
+  flag_photo(@photo_id, user_id, user_name, mp_name)  
   begin
     mp_cache = CACHE.get("mp_#{@number}")
     @random_mp_json = JSON.parse(mp_cache)
@@ -170,9 +182,9 @@ post "/" do
     @status = status.join("-")
   end
   
+  session[:flagged] = @flagged.join("-")
+  
   haml :index
-  
-  
 end
 
 post "/answer" do
