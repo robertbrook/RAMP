@@ -1,0 +1,20 @@
+%h2 Top 5 most flags by MP
+%ul
+  - @flags_by_mp[0..4].each do |flagged|
+    %li
+      =flagged["name"]
+      =" MP (#{flagged["flags"].to_i} flags)"
+
+%h2 Top 5 most flags by Flickr account
+%ul
+  - @flags_by_flickr_account[0..4].each do |flagged|
+    %li
+      =flagged["author_name"]
+      =" (#{flagged["flags"].to_i} flags)"
+      
+%h2 Top 5 most flagged photos
+%ul
+  - @flags_by_photos[0..4].each do |flagged|
+    %li
+      =flagged["photo_id"]
+      =" (#{flagged["flags"].to_i} flags)"

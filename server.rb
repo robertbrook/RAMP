@@ -8,10 +8,12 @@ require 'memcached'
 require 'mongo'
 require 'lib/MP'
 require 'helpers/partials'
+#require 'helpers/auth'
 
 enable :sessions
 
 helpers Sinatra::Partials
+#helpers Sinatra::SessionAuth
 
 MPS_DATA = File.new("./public/mps.csv").readlines
 MAX_NUMBER = MPS_DATA.length - 1
@@ -222,7 +224,41 @@ get "/about" do
   haml :about
 end
 
+get "/admin" do
+  #authorize!
+  if ENV['RACK_ENV'] && ENV['RACK_ENV'] == 'production'
+    db_name = ENV['MONGO_DB']
+    db_server = ENV['MONGO_SERVER']
+    db_port = ENV['MONGO_PORT']
+    db_user = ENV['MONGO_USER']
+    db_pass = ENV['MONGO_PASS']
+  else    
+    mongo_conf = YAML.load(File.read('config/virtualserver/mongo.yml'))
+    db_name = mongo_conf[:db]
+    db_server = mongo_conf[:server]
+    db_port = mongo_conf[:port]
+    db_user = mongo_conf[:user]
+    db_pass = mongo_conf[:pass]
+  end
+
+  db = Mongo::Connection.new(db_server, db_port).db(db_name)
+  db.authenticate(db_user, db_pass)
+  coll = db.collection("flags")
+  
+  flags_by_mp = coll.group(["name"], {"name" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
+  @flags_by_mp = flags_by_mp.sort_by { |x| -x["flags"] }
+  
+  flags_by_flickr_account = coll.group(["author_id", "author_name"], {"author_id" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
+  @flags_by_flickr_account = flags_by_flickr_account.sort_by { |x| -x["flags"] }
+  
+  flags_by_photos = coll.group(["photo_id"], {"photo_id" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
+  @flags_by_photos = flags_by_photos.sort_by { |x| -x["flags"] }
+  
+  haml :admin_home, :layout => false
+end
+
 private
+  
   def random_mp_num write_back
     unless session[:mp_nums]
       session[:mp_nums] = (1..MAX_NUMBER).to_a
