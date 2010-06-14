@@ -167,20 +167,20 @@ class MP
     
     def get_blocked_tag_list
       coll = MONGO_DB.collection("blacklist")
-      results = coll.find("tags" => /.*/)
+      results = coll.find("tags" => /.+/)
       results.next_document["tags"].join("|")
     end
     
     def get_blocked_user_id_list
       coll = MONGO_DB.collection("blacklist")
-      results = coll.find("users" => /.*/)
+      results = coll.find("users" => /.+/)
       results.next_document["users"].join("|")
     end
     
     def get_blocked_photo_list(mp_name)
       coll = MONGO_DB.collection("blacklist")
-      blocked_outright = coll.find({"photo_id" => /.*/, "name" => nil}).collect { |x| x["photo_id"] }
-      blocked_for_mp = coll.find({"photo_id" => /.*/, "name" => mp_name}).collect { |x| x["photo_id"] }
+      blocked_outright = coll.find({"photo_id" => /.+/, "name" => nil}).collect { |x| x["photo_id"] }
+      blocked_for_mp = coll.find({"photo_id" => /.+/, "name" => mp_name}).collect { |x| x["photo_id"] }
       
       (blocked_outright | blocked_for_mp).join("|")
     end
