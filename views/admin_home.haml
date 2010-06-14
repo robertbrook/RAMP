@@ -1,20 +1,34 @@
-%h2 Top 5 most flags by MP
-%ul
-  - @flags_by_mp[0..4].each do |flagged|
-    %li
-      =flagged["name"]
-      =" MP (#{flagged["flags"].to_i} flags)"
-
-%h2 Top 5 most flags by Flickr account
+%h2 Top 5 flagged Flickr accounts
 %ul
   - @flags_by_flickr_account[0..4].each do |flagged|
     %li
-      =flagged["author_name"]
-      =" (#{flagged["flags"].to_i} flags)"
-      
-%h2 Top 5 most flagged photos
+      %span.name= flagged["author_name"]
+      %span.flags= " (#{flagged["flags"].to_i} flags)"
+      %span.link
+        %a{:href => "http://flickr.com/photos/#{flagged['author_id']}"} view #{flagged["author_name"]}'s Flickr photostream
+      %span.clear
+        %a{:href => "admin/clear_flags/user_#{flagged["author_id"]}"} Clear flags for "#{flagged["author_name"]}"
+      %span.action
+        %a{:href => "admin/add_to_stoplist/user_#{flagged["author_id"]}"} Add "#{flagged["author_name"]}" to stop list
+
+%h2 Top 5 flagged Flickr images
 %ul
   - @flags_by_photos[0..4].each do |flagged|
     %li
-      =flagged["photo_id"]
-      =" (#{flagged["flags"].to_i} flags)"
+      %span.name= flagged["photo_id"]
+      %span.flags= " (#{flagged["flags"].to_i} flags)"
+      %span.link
+        %a{:href => "http://flickr.com/photos/#{flagged['author_id']}/#{flagged['photo_id']}"} view this photo on Flickr
+      %span.clear
+        %a{:href => "admin/clear_flags/photo_#{flagged["photo_id"]}"} Clear flags for this photo
+      %span.action
+        %a{:href => "admin/add_to_stoplist/photo_#{flagged["photo_id"]}"} Add this photo to stop list
+
+
+      
+/%h2 Top 5 most flags by MP
+/%ul
+/ - @flags_by_mp[0..4].each do |flagged|
+/   %li
+/     =flagged["name"]
+/     =" MP (#{flagged["flags"].to_i} flags)"
