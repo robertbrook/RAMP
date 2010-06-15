@@ -248,7 +248,7 @@ get "/admin/stoplist" do
   ip = @env["HTTP_X_REAL_IP"] unless ip
   authorize!(ip)
 
-  collection = MONGO_DB.collection("blacklist")
+  collection = MONGO_DB.collection("stoplist")
   
   @stoplist_all = collection.find()
   haml :stoplist
