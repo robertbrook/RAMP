@@ -376,7 +376,7 @@ private
   end
 
   def flag_photo(photo_id, user_id, user_name, mp_name)
-    MONGO_DB.collection("flags")
+    coll = MONGO_DB.collection("flags")
     
     flag = {"name" => "#{mp_name}", "photo_id" => "#{photo_id}", "author_id" => "#{user_id}", "author_name" => "#{user_name}"}
     coll.insert(flag)
