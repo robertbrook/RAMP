@@ -26,7 +26,7 @@ get '/stylesheets/styles.css' do
   sass :styles
 end
 
-get '/mongotest' do
+get '/mongotest/:findthis' do
   mongo_conf = YAML.load(File.read('config/virtualserver/mongo.yml'))
   db_name = mongo_conf[:db]
   db_server = mongo_conf[:server]
@@ -38,7 +38,7 @@ get '/mongotest' do
   auth = db.authenticate(db_user, db_pass)
   coll = db.collection("flags")
   
-  @rows = coll.find("name" => /lor/i)
+  @rows = coll.find("name" => /#{params[:findthis]}/i)
   
   haml :mongotest, :layout => false
 end
