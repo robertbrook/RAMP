@@ -255,8 +255,10 @@ get "/about" do
 end
 
 get "/admin" do
+  ip = @env["REMOTE_HOST"]
+  ip = @env["HTTP_X_REAL_IP"] unless ip
+  authorize!(ip)
 
-  authorize!(@env["REMOTE_HOST"])
   coll = MONGO_DB.collection("flags")
   
   flags_by_mp = coll.group(["name", "photo_id", "author_id"], {"name" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
@@ -272,7 +274,10 @@ get "/admin" do
 end
 
 get "/admin/clear_flags/photo/:photo_id" do
-  authorize!(@env["REMOTE_HOST"])
+  ip = @env["REMOTE_HOST"]
+  ip = @env["HTTP_X_REAL_IP"] unless ip
+  authorize!(ip)
+  
   coll = MONGO_DB.collection("flags")
   
   coll.remove("photo_id" => "#{params[:photo_id]}")
@@ -281,7 +286,10 @@ get "/admin/clear_flags/photo/:photo_id" do
 end
 
 get "/admin/clear_flags/user/:user_id" do
-  authorize!(@env["REMOTE_HOST"])
+  ip = @env["REMOTE_HOST"]
+  ip = @env["HTTP_X_REAL_IP"] unless ip
+  authorize!(ip)
+  
   coll = MONGO_DB.collection("flags")
   
   coll.remove("author_id" => "#{params[:user_id]}")
@@ -290,7 +298,10 @@ get "/admin/clear_flags/user/:user_id" do
 end
 
 get "/admin/add_to_stoplist/photo/:photo_id" do
-  authorize!(@env["REMOTE_HOST"])
+  ip = @env["REMOTE_HOST"]
+  ip = @env["HTTP_X_REAL_IP"] unless ip
+  authorize!(ip)
+  
   coll = MONGO_DB.collection("blacklist")
   
   photo_id =  params[:photo_id]
@@ -304,7 +315,10 @@ get "/admin/add_to_stoplist/photo/:photo_id" do
 end
 
 get "/admin/add_to_stoplist/mp_photo/:mp_name/:photo_id" do
-  authorize!(@env["REMOTE_HOST"])
+  ip = @env["REMOTE_HOST"]
+  ip = @env["HTTP_X_REAL_IP"] unless ip
+  authorize!(ip)
+  
   coll = MONGO_DB.collection("blacklist")
   
   mp_name = params[:mp_name]
@@ -322,7 +336,10 @@ get "/admin/add_to_stoplist/mp_photo/:mp_name/:photo_id" do
 end
 
 get "/admin/add_to_stoplist/user/:user_id" do
-  authorize!(@env["REMOTE_HOST"])
+  ip = @env["REMOTE_HOST"]
+  ip = @env["HTTP_X_REAL_IP"] unless ip
+  authorize!(ip)
+  
   coll = MONGO_DB.collection("blacklist")
   
   user_doc = coll.find("users" => /.+/)
@@ -339,6 +356,29 @@ get "/admin/add_to_stoplist/user/:user_id" do
   coll.remove("author_id" => "#{params[:user_id]}")
   
   redirect "/admin"
+end
+
+get '/login' do
+  haml :admin_login
+end
+
+post '/login' do
+  if ENV['RACK_ENV'] && ENV['RACK_ENV'] == 'production'
+    user = ENV['ADMIN_USER']
+    pass = ENV['ADMIN_PASS']
+  else
+    admin_conf = YAML.load(File.read('config/virtualserver/admin.yml'))
+    user = admin_conf[:user]
+    pass = admin_conf[:pass]
+  end
+
+  if params[:user] == user && params[:pass] == pass
+    session[:authorized] = true
+    redirect '/admin'
+  else
+    session[:authorized] = false
+    redirect '/login'
+  end
 end
 
 private
