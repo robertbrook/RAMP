@@ -258,7 +258,7 @@ get "/admin" do
   authorize!(@env["REMOTE_HOST"])
   coll = MONGO_DB.collection("flags")
   
-  flags_by_mp = coll.group(["name", "photo_id"], {"name" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
+  flags_by_mp = coll.group(["name", "photo_id", "author_id"], {"name" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
   @flags_by_mp = flags_by_mp.sort_by { |x| -x["flags"] }
   
   flags_by_flickr_account = coll.group(["author_id", "author_name"], {"author_id" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
@@ -270,7 +270,7 @@ get "/admin" do
   haml :admin
 end
 
-get "/admin/clear_flags/photo_:photo_id" do
+get "/admin/clear_flags/photo/:photo_id" do
   authorize!(@env["REMOTE_HOST"])
   coll = MONGO_DB.collection("flags")
   
@@ -279,7 +279,7 @@ get "/admin/clear_flags/photo_:photo_id" do
   redirect "/admin"
 end
 
-get "/admin/clear_flags/user_:user_id" do
+get "/admin/clear_flags/user/:user_id" do
   authorize!(@env["REMOTE_HOST"])
   coll = MONGO_DB.collection("flags")
   
@@ -288,7 +288,7 @@ get "/admin/clear_flags/user_:user_id" do
   redirect "/admin"
 end
 
-get "/admin/add_to_stoplist/photo_:photo_id" do
+get "/admin/add_to_stoplist/photo/:photo_id" do
   authorize!(@env["REMOTE_HOST"])
   coll = MONGO_DB.collection("blacklist")
   
@@ -302,7 +302,25 @@ get "/admin/add_to_stoplist/photo_:photo_id" do
   redirect "/admin"
 end
 
-get "/admin/add_to_stoplist/user_:user_id" do
+get "/admin/add_to_stoplist/mp_photo/:mp_name/:photo_id" do
+  authorize!(@env["REMOTE_HOST"])
+  coll = MONGO_DB.collection("blacklist")
+  
+  mp_name = params[:mp_name]
+  mp_name.gsub!("-", " ")
+  mp_name.gsub!("  ", "-")
+  
+  photo_id =  params[:photo_id]
+  new_photo_doc = {"photo_id" => "#{photo_id}", "name" => "#{mp_name}"}
+  coll.insert(new_photo_doc)
+  
+  coll = MONGO_DB.collection("flags")
+  coll.remove("photo_id" => "#{photo_id}", "name" => "#{mp_name}")
+  
+  redirect "/admin"
+end
+
+get "/admin/add_to_stoplist/user/:user_id" do
   authorize!(@env["REMOTE_HOST"])
   coll = MONGO_DB.collection("blacklist")
   
