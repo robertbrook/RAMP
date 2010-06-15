@@ -1,0 +1,15 @@
+%p You are an admin user on RAMP. You can add an account or an individual photo to the stop list.
+
+%table{:width => "70%"}
+  %caption Flagged Accounts
+  %thead
+    %tr
+      %th Flags
+      %th Account
+      %th
+      %th
+  %tbody
+  - @stoplist_all.each do |stopped|
+    %tr
+      %td= "#{stopped.inspect}"
+     
