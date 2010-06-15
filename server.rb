@@ -8,14 +8,40 @@ require 'memcached'
 require 'mongo'
 require 'lib/MP'
 require 'helpers/partials'
+#require 'helpers/auth'
 
 enable :sessions
 
 helpers Sinatra::Partials
+#helpers Sinatra::SessionAuth
 
 MPS_DATA = File.new("./public/mps.csv").readlines
 MAX_NUMBER = MPS_DATA.length - 1
 CACHE = Memcached.new()
+
+def self.get_mongo_connection
+  if ENV['RACK_ENV'] && ENV['RACK_ENV'] == 'production'
+    db_name = ENV['MONGO_DB']
+    db_server = ENV['MONGO_SERVER']
+    db_port = ENV['MONGO_PORT']
+    db_user = ENV['MONGO_USER']
+    db_pass = ENV['MONGO_PASS']
+  else    
+    mongo_conf = YAML.load(File.read('config/virtualserver/mongo.yml'))
+    db_name = mongo_conf[:db]
+    db_server = mongo_conf[:server]
+    db_port = mongo_conf[:port]
+    db_user = mongo_conf[:user]
+    db_pass = mongo_conf[:pass]
+  end
+
+  db = Mongo::Connection.new(db_server, db_port).db(db_name)
+  db.authenticate(db_user, db_pass)
+  
+  return db
+end
+
+MONGO_DB = get_mongo_connection()
 
 get '/env' do
   "<code>" + ENV.inspect + "</code>"
@@ -45,6 +71,7 @@ end
 
 get '/' do
   session[:page_nums] = session[:mp_nums]
+  session[:flagged] = ""
   
   @number = params[:num]
   if @number
@@ -127,6 +154,82 @@ get '/' do
   haml :index
 end
 
+post "/" do
+  session[:page_nums] = session[:mp_nums]
+  @flagged = session[:flagged]
+  
+  if @flagged
+    @flagged = @flagged.split("-")
+  else
+    @flagged = []
+  end
+  
+  status = params[:status].split("-")
+  @number = status.last.to_i
+  
+  @random_mp = setup_mp(@number)
+  @photos = get_photos(@random_mp)
+  
+  photo_id = params[:photo_id]
+  user_id = params[:user_id]
+  user_name = params[:user_name]
+  mp_name = @random_mp.name
+  
+  @flagged << photo_id
+  
+  flag_photo(@photo_id, user_id, user_name, mp_name)  
+  begin
+    mp_cache = CACHE.get("mp_#{@number}")
+    @random_mp_json = JSON.parse(mp_cache)
+  rescue Memcached::NotFound
+    @random_mp_json = JSON.parse(@random_mp.to_json)
+    CACHE.add("mp_#{@number}", JSON.generate(@random_mp_json))
+  end
+
+  if @photos.size > 0
+    mp1_number = status[0].to_i
+    alt_mp1 = setup_mp(mp1_number)
+    alt_mp1_json = ""
+    begin
+      mp_cache = CACHE.get("mp_#{mp1_number}")
+      alt_mp1_json = JSON.parse(mp_cache)
+    rescue Memcached::NotFound
+      alt_mp1_json = JSON.parse(alt_mp1.to_json)
+      CACHE.add("mp_#{mp1_number}", JSON.generate(alt_mp1_json))
+    end
+    
+    mp2_number = status[1].to_i
+    alt_mp2 = setup_mp(mp2_number)
+    alt_mp2_json = ""
+    begin
+      mp_cache = CACHE.get("mp_#{mp2_number}")
+      alt_mp2_json = JSON.parse(mp_cache)
+    rescue Memcached::NotFound
+      alt_mp2_json = JSON.parse(alt_mp2.to_json)
+      CACHE.add("mp_#{mp2_number}", JSON.generate(alt_mp2_json))
+    end
+  
+    pos = rand(3)
+  
+    @mps = []
+    0.upto(2) do |i|
+      if i == pos
+        @mps << @random_mp_json
+      elsif @mps.include?(alt_mp1_json)
+        @mps << alt_mp2_json
+      else
+        @mps << alt_mp1_json
+      end
+    end
+  
+    @status = status.join("-")
+  end
+  
+  session[:flagged] = @flagged.join("-")
+  
+  haml :index
+end
+
 post "/answer" do
   @status = params[:status].split("-")
   @answer = @status.last
@@ -162,7 +265,76 @@ get "/about" do
   haml :about
 end
 
+get "/admin" do
+  #authorize!
+  coll = MONGO_DB.collection("flags")
+  
+  #flags_by_mp = coll.group(["name"], {"name" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
+  #@flags_by_mp = flags_by_mp.sort_by { |x| -x["flags"] }
+  
+  flags_by_flickr_account = coll.group(["author_id", "author_name"], {"author_id" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
+  @flags_by_flickr_account = flags_by_flickr_account.sort_by { |x| -x["flags"] }
+  
+  flags_by_photos = coll.group(["photo_id", "author_id"], {"photo_id" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
+  @flags_by_photos = flags_by_photos.sort_by { |x| -x["flags"] }
+  
+  haml :admin_home, :layout => false
+end
+
+get "/admin/clear_flags/photo_:photo_id" do
+  #authorize!
+  coll = MONGO_DB.collection("flags")
+  
+  coll.remove("photo_id" => "#{params[:photo_id]}")
+  
+  redirect "/admin"
+end
+
+get "/admin/clear_flags/user_:user_id" do
+  #authorize!
+  coll = MONGO_DB.collection("flags")
+  
+  coll.remove("author_id" => "#{params[:user_id]}")
+  
+  redirect "/admin"
+end
+
+get "/admin/add_to_stoplist/photo_:photo_id" do
+  #authorize!
+  coll = MONGO_DB.collection("blacklist")
+  
+  photo_id =  params[:photo_id]
+  new_photo_doc = {"photo_id" => "#{photo_id}"}  
+  coll.insert(new_photo_doc)
+  
+  coll = MONGO_DB.collection("flags")
+  coll.remove("photo_id" => "#{photo_id}")
+  
+  redirect "/admin"
+end
+
+get "/admin/add_to_stoplist/user_:user_id" do
+  #authorize!
+  coll = MONGO_DB.collection("blacklist")
+  
+  user_doc = coll.find("users" => /.+/)
+  users = user_doc.next_document["users"]
+
+  unless users.include?([params[:user_id]])
+    users << params[:user_id]
+  
+    new_user_doc = {"users" => users}
+    coll.update({ "users" => /.+/}, new_user_doc)
+  end
+  
+  coll = MONGO_DB.collection("flags")
+  coll.remove("author_id" => "#{params[:user_id]}")
+  
+  redirect "/admin"
+end
+
 private
+  
   def random_mp_num write_back
     unless session[:mp_nums]
       session[:mp_nums] = (1..MAX_NUMBER).to_a
@@ -201,4 +373,11 @@ private
       photos = response["results"]["photo"]
     end
     photos
+  end
+
+  def flag_photo(photo_id, user_id, user_name, mp_name)
+    MONGO_DB.collection("flags")
+    
+    flag = {"name" => "#{mp_name}", "photo_id" => "#{photo_id}", "author_id" => "#{user_id}", "author_name" => "#{user_name}"}
+    coll.insert(flag)
   end
