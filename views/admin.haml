@@ -15,9 +15,30 @@
       %td
         %a{:href => "http://flickr.com/photos/#{flagged['author_id']}"} #{flagged["author_name"]}
       %td
-        %a{:href => "admin/clear_flags/user_#{flagged["author_id"]}"} Clear
+        %a{:href => "admin/clear_flags/user/#{flagged["author_id"]}"} Clear
       %td
-        %a{:href => "admin/add_to_stoplist/user_#{flagged["author_id"]}"} Stop
+        %a{:href => "admin/add_to_stoplist/user/#{flagged["author_id"]}"} Stop
+
+%br
+
+%table{:width => "70%"}
+  %caption Images flagged for an MP
+  %thead
+    %tr
+      %th Flags
+      %th Photo
+      %th
+      %th
+  %tbody
+  - @flags_by_mp[0..9].each do |flagged|
+    %tr
+      %td= flagged["flags"].to_i
+      %td
+        %a{:href => "http://flickr.com/photos/#{flagged['author_id']}/#{flagged['photo_id']}"}= flagged["name"]
+      %td{:colspan => 2}
+        %a{:href => "admin/add_to_stoplist/mp_photo/#{flagged['name'].gsub("-","--").gsub(" ","-")}/#{flagged["photo_id"]}"} Stop (named MP only)
+
+%br
 
 %table{:width => "70%"}
   %caption Flagged Images
@@ -34,15 +55,6 @@
       %td
         %a{:href => "http://flickr.com/photos/#{flagged['author_id']}/#{flagged['photo_id']}"}= flagged["photo_id"]
       %td
-        %a{:href => "admin/clear_flags/photo_#{flagged["photo_id"]}"} Clear
+        %a{:href => "admin/clear_flags/photo/#{flagged["photo_id"]}"} Clear
       %td
-        %a{:href => "admin/add_to_stoplist/photo_#{flagged["photo_id"]}"} Stop
-
-
-      
-/%h2 Top 5 most flags by MP
-/%ul
-/ - @flags_by_mp[0..4].each do |flagged|
-/   %li
-/     =flagged["name"]
-/     =" MP (#{flagged["flags"].to_i} flags)"
+        %a{:href => "admin/add_to_stoplist/photo/#{flagged["photo_id"]}"} Stop
