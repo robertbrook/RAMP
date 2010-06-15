@@ -13,6 +13,7 @@ module Sinatra
           if ENV['RACK_ENV'] && ENV['RACK_ENV'] == 'production'
             user = ENV['ADMIN_USER']
             pass = ENV['ADMIN_PASS']
+            ips = ENV['ADMIN_IPS']
           else
             admin_conf = YAML.load(File.read('config/virtualserver/admin.yml'))
             user = admin_conf[:user]
@@ -20,7 +21,7 @@ module Sinatra
             ips = admin_conf[:allowed_ips]
           end
 
-          if ips.include?(ip_address)
+          if ip_address && ips.include?(ip_address)
             session[:authorized] = true
           else
             redirect '/login'
@@ -37,31 +38,10 @@ module Sinatra
       app.helpers SessionAuth::Helpers      
     
       if ENV['RACK_ENV'] && ENV['RACK_ENV'] == 'production'
-        user = ENV['ADMIN_USER']
-        pass = ENV['ADMIN_PASS']
         ips = ENV['ADMIN_IPS']
       else
         admin_conf = YAML.load(File.read('config/virtualserver/admin.yml'))
-        user = admin_conf[:user]
-        pass = admin_conf[:pass]
         ips = admin_conf[:allowed_ips]
-      end
-      
-      app.set :username, user
-      app.set :password, pass
-
-      app.get '/login' do
-        haml :admin_login, :layout => false
-      end
-
-      app.post '/login' do
-        if params[:user] == options.username && params[:pass] == options.password
-          session[:authorized] = true
-          redirect '/admin'
-        else
-          session[:authorized] = false
-          redirect '/login'
-        end
       end
     end
   end
