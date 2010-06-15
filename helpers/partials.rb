@@ -15,4 +15,6 @@ module Sinatra::Partials
       haml(:"#{template}", options)
     end
   end
+  
+  helpers Sinatra::Partials
 end

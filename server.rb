@@ -8,12 +8,9 @@ require 'memcached'
 require 'mongo'
 require 'lib/MP'
 require 'helpers/partials'
-#require 'helpers/auth'
+require 'helpers/auth'
 
 enable :sessions
-
-helpers Sinatra::Partials
-#helpers Sinatra::SessionAuth
 
 MPS_DATA = File.new("./public/mps.csv").readlines
 MAX_NUMBER = MPS_DATA.length - 1
@@ -62,7 +59,7 @@ get '/mongotest/:findthis' do
   
   db = Mongo::Connection.new(db_server, db_port).db(db_name)
   auth = db.authenticate(db_user, db_pass)
-  coll = db.collection("flags")
+  coll = MONGO_DB.collection("flags")
   
   @rows = coll.find("name" => /#{params[:findthis]}/i)
   
@@ -266,7 +263,7 @@ get "/about" do
 end
 
 get "/admin" do
-  #authorize!
+  authorize!(@env["REMOTE_HOST"])
   coll = MONGO_DB.collection("flags")
   
   #flags_by_mp = coll.group(["name"], {"name" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
