@@ -1,28 +1,32 @@
-%h2 Top 5 flagged Flickr accounts
-%ul
-  - @flags_by_flickr_account[0..4].each do |flagged|
-    %li
-      %span.name= flagged["author_name"]
-      %span.flags= " (#{flagged["flags"].to_i} flags)"
-      %span.link
-        %a{:href => "http://flickr.com/photos/#{flagged['author_id']}"} view #{flagged["author_name"]}'s Flickr photostream
-      %span.clear
-        %a{:href => "admin/clear_flags/user_#{flagged["author_id"]}"} Clear flags for "#{flagged["author_name"]}"
-      %span.action
-        %a{:href => "admin/add_to_stoplist/user_#{flagged["author_id"]}"} Add "#{flagged["author_name"]}" to stop list
+%h2 Flags and blacklisting admin
 
-%h2 Top 5 flagged Flickr images
-%ul
-  - @flags_by_photos[0..4].each do |flagged|
-    %li
-      %span.name= flagged["photo_id"]
-      %span.flags= " (#{flagged["flags"].to_i} flags)"
-      %span.link
-        %a{:href => "http://flickr.com/photos/#{flagged['author_id']}/#{flagged['photo_id']}"} view this photo on Flickr
-      %span.clear
-        %a{:href => "admin/clear_flags/photo_#{flagged["photo_id"]}"} Clear flags for this photo
-      %span.action
-        %a{:href => "admin/add_to_stoplist/photo_#{flagged["photo_id"]}"} Add this photo to stop list
+%p You are recognised by RAMP as a user with administrative rights.
+
+%h3 Accounts
+
+%table{:width => "70%"}
+  - @flags_by_flickr_account[0..9].each do |flagged|
+    %tr
+      %td= "#{flagged["flags"].to_i}"
+      %td
+        %a{:href => "http://flickr.com/photos/#{flagged['author_id']}"} #{flagged["author_name"]}
+      %td
+        %a{:href => "admin/clear_flags/user_#{flagged["author_id"]}"} Clear
+      %td
+        %a{:href => "admin/add_to_stoplist/user_#{flagged["author_id"]}"} Stop
+
+%h3 Images
+
+%table{:width => "70%"}
+  - @flags_by_photos[0..9].each do |flagged|
+    %tr
+      %td= flagged["flags"].to_i
+      %td
+        %a{:href => "http://flickr.com/photos/#{flagged['author_id']}/#{flagged['photo_id']}"}= flagged["photo_id"]
+      %td
+        %a{:href => "admin/clear_flags/photo_#{flagged["photo_id"]}"} Clear
+      %td
+        %a{:href => "admin/add_to_stoplist/photo_#{flagged["photo_id"]}"} Stop
 
 
       
