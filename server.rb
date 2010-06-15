@@ -50,15 +50,6 @@ get '/stylesheets/styles.css' do
 end
 
 get '/mongotest/:findthis' do
-  mongo_conf = YAML.load(File.read('config/virtualserver/mongo.yml'))
-  db_name = mongo_conf[:db]
-  db_server = mongo_conf[:server]
-  db_port = mongo_conf[:port]
-  db_user = mongo_conf[:user]
-  db_pass = mongo_conf[:pass]
-  
-  db = Mongo::Connection.new(db_server, db_port).db(db_name)
-  auth = db.authenticate(db_user, db_pass)
   coll = MONGO_DB.collection("flags")
   
   @rows = coll.find("name" => /#{params[:findthis]}/i)
