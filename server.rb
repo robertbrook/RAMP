@@ -256,6 +256,7 @@ end
 
 get "/admin" do
   ip = @env["REMOTE_HOST"]
+  ip = @env["REMOTE_ADDR"] unless ip
   ip = @env["HTTP_X_REAL_IP"] unless ip
   authorize!(ip)
 
@@ -275,6 +276,7 @@ end
 
 get "/admin/clear_flags/photo/:photo_id" do
   ip = @env["REMOTE_HOST"]
+  ip = @env["REMOTE_ADDR"] unless ip
   ip = @env["HTTP_X_REAL_IP"] unless ip
   authorize!(ip)
   
@@ -287,6 +289,7 @@ end
 
 get "/admin/clear_flags/user/:user_id" do
   ip = @env["REMOTE_HOST"]
+  ip = @env["REMOTE_ADDR"] unless ip
   ip = @env["HTTP_X_REAL_IP"] unless ip
   authorize!(ip)
   
@@ -299,6 +302,7 @@ end
 
 get "/admin/add_to_stoplist/photo/:photo_id" do
   ip = @env["REMOTE_HOST"]
+  ip = @env["REMOTE_ADDR"] unless ip
   ip = @env["HTTP_X_REAL_IP"] unless ip
   authorize!(ip)
   
@@ -316,6 +320,7 @@ end
 
 get "/admin/add_to_stoplist/mp_photo/:mp_name/:photo_id" do
   ip = @env["REMOTE_HOST"]
+  ip = @env["REMOTE_ADDR"] unless ip
   ip = @env["HTTP_X_REAL_IP"] unless ip
   authorize!(ip)
   
@@ -337,6 +342,7 @@ end
 
 get "/admin/add_to_stoplist/user/:user_id" do
   ip = @env["REMOTE_HOST"]
+  ip = @env["REMOTE_ADDR"] unless ip
   ip = @env["HTTP_X_REAL_IP"] unless ip
   authorize!(ip)
   
