@@ -255,6 +255,7 @@ get "/about" do
 end
 
 get "/admin" do
+
   authorize!(@env["REMOTE_HOST"])
   coll = MONGO_DB.collection("flags")
   
