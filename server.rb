@@ -40,21 +40,9 @@ end
 
 MONGO_DB = get_mongo_connection()
 
-get '/env' do
-  "<code>" + ENV.inspect + "</code>"
-end
-
 get '/stylesheets/styles.css' do
   content_type 'text/css', :charset => 'utf-8'
   sass :styles
-end
-
-get '/mongotest/:findthis' do
-  coll = MONGO_DB.collection("flags")
-  
-  @rows = coll.find("name" => /#{params[:findthis]}/i)
-  
-  haml :mongotest, :layout => false
 end
 
 get '/' do
@@ -254,6 +242,18 @@ get "/about" do
   haml :about
 end
 
+get "/admin/stoplist" do
+  ip = @env["REMOTE_HOST"]
+  ip = @env["REMOTE_ADDR"] unless ip
+  ip = @env["HTTP_X_REAL_IP"] unless ip
+  authorize!(ip)
+
+  collection = MONGO_DB.collection("blacklist")
+  
+  @stoplist_all = collection.find()
+  haml :stoplist
+end
+
 get "/admin" do
   ip = @env["REMOTE_HOST"]
   ip = @env["REMOTE_ADDR"] unless ip
@@ -306,7 +306,7 @@ get "/admin/add_to_stoplist/photo/:photo_id" do
   ip = @env["HTTP_X_REAL_IP"] unless ip
   authorize!(ip)
   
-  coll = MONGO_DB.collection("blacklist")
+  coll = MONGO_DB.collection("stoplist")
   
   photo_id =  params[:photo_id]
   new_photo_doc = {"photo_id" => "#{photo_id}"}  
@@ -324,7 +324,7 @@ get "/admin/add_to_stoplist/mp_photo/:mp_name/:photo_id" do
   ip = @env["HTTP_X_REAL_IP"] unless ip
   authorize!(ip)
   
-  coll = MONGO_DB.collection("blacklist")
+  coll = MONGO_DB.collection("stoplist")
   
   mp_name = params[:mp_name]
   mp_name.gsub!("-", " ")
@@ -346,7 +346,7 @@ get "/admin/add_to_stoplist/user/:user_id" do
   ip = @env["HTTP_X_REAL_IP"] unless ip
   authorize!(ip)
   
-  coll = MONGO_DB.collection("blacklist")
+  coll = MONGO_DB.collection("stoplist")
   
   user_doc = coll.find("users" => /.+/)
   users = user_doc.next_document["users"]
