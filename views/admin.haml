@@ -1,0 +1,50 @@
+%h2 Flags and blacklisting admin
+
+%p You are recognised by RAMP as a user with administrative rights.
+
+%table{:width => "70%"}
+  %caption Flagged Accounts
+  %thead
+    %tr
+      %th Flags
+      %th Account
+      %th
+      %th
+  %tbody
+  - @flags_by_flickr_account[0..9].each do |flagged|
+    %tr
+      %td= "#{flagged["flags"].to_i}"
+      %td
+        %a{:href => "http://flickr.com/photos/#{flagged['author_id']}"} #{flagged["author_name"]}
+      %td
+        %a{:href => "admin/clear_flags/user_#{flagged["author_id"]}"} Clear
+      %td
+        %a{:href => "admin/add_to_stoplist/user_#{flagged["author_id"]}"} Stop
+
+%table{:width => "70%"}
+  %caption Flagged Images
+  %thead
+    %tr
+      %th Flags
+      %th Photo
+      %th
+      %th
+  %tbody
+  - @flags_by_photos[0..9].each do |flagged|
+    %tr
+      %td= flagged["flags"].to_i
+      %td
+        %a{:href => "http://flickr.com/photos/#{flagged['author_id']}/#{flagged['photo_id']}"}= flagged["photo_id"]
+      %td
+        %a{:href => "admin/clear_flags/photo_#{flagged["photo_id"]}"} Clear
+      %td
+        %a{:href => "admin/add_to_stoplist/photo_#{flagged["photo_id"]}"} Stop
+
+
+      
+/%h2 Top 5 most flags by MP
+/%ul
+/ - @flags_by_mp[0..4].each do |flagged|
+/   %li
+/     =flagged["name"]
+/     =" MP (#{flagged["flags"].to_i} flags)"

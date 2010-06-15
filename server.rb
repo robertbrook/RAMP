@@ -275,7 +275,7 @@ get "/admin" do
   flags_by_photos = coll.group(["photo_id", "author_id"], {"photo_id" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
   @flags_by_photos = flags_by_photos.sort_by { |x| -x["flags"] }
   
-  haml :admin_home, :layout => false
+  haml :admin
 end
 
 get "/admin/clear_flags/photo_:photo_id" do
