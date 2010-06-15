@@ -2,9 +2,15 @@
 
 %p You are recognised by RAMP as a user with administrative rights.
 
-%h3 Accounts
-
 %table{:width => "70%"}
+  %caption Flagged Accounts
+  %thead
+    %tr
+      %th Flags
+      %th Account
+      %th
+      %th
+  %tbody
   - @flags_by_flickr_account[0..9].each do |flagged|
     %tr
       %td= "#{flagged["flags"].to_i}"
@@ -15,9 +21,15 @@
       %td
         %a{:href => "admin/add_to_stoplist/user_#{flagged["author_id"]}"} Stop
 
-%h3 Images
-
 %table{:width => "70%"}
+  %caption Flagged Images
+  %thead
+    %tr
+      %th Flags
+      %th Photo
+      %th
+      %th
+  %tbody
   - @flags_by_photos[0..9].each do |flagged|
     %tr
       %td= flagged["flags"].to_i
