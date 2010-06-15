@@ -270,7 +270,7 @@ get "/admin" do
 end
 
 get "/admin/clear_flags/photo_:photo_id" do
-  #authorize!
+  authorize!(@env["REMOTE_HOST"])
   coll = MONGO_DB.collection("flags")
   
   coll.remove("photo_id" => "#{params[:photo_id]}")
@@ -279,7 +279,7 @@ get "/admin/clear_flags/photo_:photo_id" do
 end
 
 get "/admin/clear_flags/user_:user_id" do
-  #authorize!
+  authorize!(@env["REMOTE_HOST"])
   coll = MONGO_DB.collection("flags")
   
   coll.remove("author_id" => "#{params[:user_id]}")
@@ -288,7 +288,7 @@ get "/admin/clear_flags/user_:user_id" do
 end
 
 get "/admin/add_to_stoplist/photo_:photo_id" do
-  #authorize!
+  authorize!(@env["REMOTE_HOST"])
   coll = MONGO_DB.collection("blacklist")
   
   photo_id =  params[:photo_id]
@@ -302,7 +302,7 @@ get "/admin/add_to_stoplist/photo_:photo_id" do
 end
 
 get "/admin/add_to_stoplist/user_:user_id" do
-  #authorize!
+  authorize!(@env["REMOTE_HOST"])
   coll = MONGO_DB.collection("blacklist")
   
   user_doc = coll.find("users" => /.+/)
