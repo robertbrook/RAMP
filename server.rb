@@ -159,13 +159,14 @@ post "/" do
   @photos = get_photos(@random_mp)
   
   photo_id = params[:photo_id]
+  
   user_id = params[:user_id]
   user_name = params[:user_name]
   mp_name = @random_mp.name
   
   @flagged << photo_id
   
-  flag_photo(@photo_id, user_id, user_name, mp_name)  
+  flag_photo(photo_id, user_id, user_name, mp_name)  
   begin
     mp_cache = CACHE.get("mp_#{@number}")
     @random_mp_json = JSON.parse(mp_cache)
@@ -257,8 +258,8 @@ get "/admin" do
   authorize!(@env["REMOTE_HOST"])
   coll = MONGO_DB.collection("flags")
   
-  #flags_by_mp = coll.group(["name"], {"name" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
-  #@flags_by_mp = flags_by_mp.sort_by { |x| -x["flags"] }
+  flags_by_mp = coll.group(["name", "photo_id"], {"name" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
+  @flags_by_mp = flags_by_mp.sort_by { |x| -x["flags"] }
   
   flags_by_flickr_account = coll.group(["author_id", "author_name"], {"author_id" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
   @flags_by_flickr_account = flags_by_flickr_account.sort_by { |x| -x["flags"] }
