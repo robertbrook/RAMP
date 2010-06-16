@@ -241,10 +241,13 @@ post "/answer" do
   
   unless session[:last] == @status
     if @guess == @answer
+      session[:correct] = 0 unless session[:correct]
       session[:correct] +=1
     else
+      session[:wrong] = 0 unless session[:wrong]
       session[:wrong] +=1
     end
+    session[:attempts] = 1 unless session[:attempts]
     session[:passes] = session[:attempts] - (session[:correct] + session[:wrong])
   end
   
