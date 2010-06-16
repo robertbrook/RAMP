@@ -60,13 +60,14 @@ class MP
       return ""
     end
     
-    unless response["query"]["results"]
-      return ""
-    end
+    return "" unless response["query"]
+    return "" unless response["query"]["results"]
     
     src = response["query"]["results"]["img"]["src"]
     
     if src =~ /unknownperson/
+      return ""
+    elsif src.nil?
       return ""
     else
       src = "http://www.theyworkforyou.com#{src}"
@@ -83,9 +84,12 @@ class MP
 
     if response.nil? or response.is_a?(String)
       return ""
-    else
-      return response["query"]["results"]["result"]["url"]
     end
+  
+    return "" unless response["query"]
+    return "" unless response["query"]["results"]
+    
+    return response["query"]["results"]["result"]["url"]
   end
   
   def wikipedia_photo
@@ -94,9 +98,10 @@ class MP
     
     response = JSON.parse(result.body)
     
-    if !response["query"] || response["query"]["count"] == "0"
-      return ""
-    end
+    return "" unless response["query"]
+    return "" unless response["query"]["results"]
+    
+    return "" if response["query"]["count"] == "0"
     
     if response["query"]["count"] == "1"
       src = response["query"]["results"]["img"]["src"]
