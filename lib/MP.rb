@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'json'
+require 'mongo'
 require 'yaml'
 require 'oauth'
 
