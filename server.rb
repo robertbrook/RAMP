@@ -130,6 +130,7 @@ get '/' do
   haml :index
 end
 
+#flagging a photo
 post "/" do
   session[:page_nums] = session[:mp_nums]
   @flagged = session[:flagged]
@@ -154,7 +155,21 @@ post "/" do
   
   @flagged << photo_id
   
-  flag_photo(photo_id, user_id, user_name, mp_name)  
+  farm = ""
+  server = ""
+  secret = ""
+  
+  @photos.each do |photo|
+    if photo["id"] == photo_id
+      farm = photo["farm"]
+      server = photo["server"]
+      secret = photo["secret"]
+      break
+    end
+  end
+  
+  flag_photo(photo_id, user_id, user_name, mp_name, farm, server, secret)
+  
   begin
     mp_cache = CACHE.get("mp_#{@number}")
     @random_mp_json = JSON.parse(mp_cache)
@@ -429,9 +444,9 @@ private
     photos
   end
 
-  def flag_photo(photo_id, user_id, user_name, mp_name)
+  def flag_photo(photo_id, user_id, user_name, mp_name, farm, server, secret)
     coll = MONGO_DB.collection("flags")
     
-    flag = {"name" => "#{mp_name}", "photo_id" => "#{photo_id}", "author_id" => "#{user_id}", "author_name" => "#{user_name}"}
+    flag = {"name" => "#{mp_name}", "photo_id" => "#{photo_id}", "author_id" => "#{user_id}", "author_name" => "#{user_name}", "flickr_farm" => "#{farm}", "flickr_server" => "#{server}", "flickr_secret" => "#{secret}"}
     coll.insert(flag)
   end
