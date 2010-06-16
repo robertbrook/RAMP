@@ -277,13 +277,13 @@ get "/admin" do
 
   coll = MONGO_DB.collection("flags")
   
-  flags_by_mp = coll.group(["name", "photo_id", "author_id"], {"name" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
+  flags_by_mp = coll.group(["name", "photo_id", "author_id", "flickr_secret", "flickr_farm", "flickr_server"], {"name" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
   @flags_by_mp = flags_by_mp.sort_by { |x| -x["flags"] }
   
   flags_by_flickr_account = coll.group(["author_id", "author_name"], {"author_id" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
   @flags_by_flickr_account = flags_by_flickr_account.sort_by { |x| -x["flags"] }
   
-  flags_by_photos = coll.group(["photo_id", "author_id"], {"photo_id" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
+  flags_by_photos = coll.group(["photo_id", "author_id", "flickr_secret", "flickr_farm", "flickr_server"], {"photo_id" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
   @flags_by_photos = flags_by_photos.sort_by { |x| -x["flags"] }
   
   haml :admin

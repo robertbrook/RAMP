@@ -21,30 +21,33 @@
 
 %br
 
-%table{:width => "70%"}
+%table{:width => "80%"}
   %caption Images flagged for an MP
   %thead
     %tr
       %th Flags
+      %th Thumbnail
       %th Photo
-      %th
       %th
   %tbody
   - @flags_by_mp[0..9].each do |flagged|
     %tr
       %td= flagged["flags"].to_i
       %td
+        %img{ :src => "http://farm#{flagged["flickr_farm"]}.static.flickr.com/#{flagged["flickr_server"]}/#{flagged["photo_id"]}_#{flagged["flickr_secret"]}_s.jpg" }
+      %td
         %a{:href => "http://flickr.com/photos/#{flagged['author_id']}/#{flagged['photo_id']}"}= flagged["name"]
-      %td{:colspan => 2}
-        %a{:href => "admin/add_to_stoplist/mp_photo/#{flagged['name'].gsub("-","--").gsub(" ","-")}/#{flagged["photo_id"]}"} Stop (named MP only)
+      %td
+        %a{:href => "admin/add_to_stoplist/mp_photo/#{flagged['name'].gsub("-","--").gsub(" ","-")}/#{flagged["photo_id"]}"} Stop <br /> (named MP only)
 
 %br
 
-%table{:width => "70%"}
+%table{:width => "80%"}
   %caption Flagged Images
   %thead
     %tr
       %th Flags
+      %th Thumbnail
       %th Photo
       %th
       %th
@@ -53,8 +56,12 @@
     %tr
       %td= flagged["flags"].to_i
       %td
+        %img{ :src => "http://farm#{flagged["flickr_farm"]}.static.flickr.com/#{flagged["flickr_server"]}/#{flagged["photo_id"]}_#{flagged["flickr_secret"]}_s.jpg" }
+      %td
         %a{:href => "http://flickr.com/photos/#{flagged['author_id']}/#{flagged['photo_id']}"}= flagged["photo_id"]
       %td
         %a{:href => "admin/clear_flags/photo/#{flagged["photo_id"]}"} Clear
       %td
         %a{:href => "admin/add_to_stoplist/photo/#{flagged["photo_id"]}"} Stop
+
+%br
