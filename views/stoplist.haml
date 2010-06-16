@@ -1,15 +1,58 @@
 %p You are an admin user on RAMP. You can add an account or an individual photo to the stop list.
 
 %table{:width => "70%"}
-  %caption Flagged Accounts
+  %caption Stopped Photos
   %thead
     %tr
-      %th Flags
-      %th Account
-      %th
-      %th
+      %th Thumbnail
+      %th Photo
   %tbody
-  - @stoplist_all.each do |stopped|
+  - @stoplist_photos.each do |stopped|
     %tr
-      %td= "#{stopped.inspect}"
-     
+      %td
+        %img{ :src => "http://farm#{stopped["flickr_farm"]}.static.flickr.com/#{stopped["flickr_server"]}/#{stopped["photo_id"]}_#{stopped["flickr_secret"]}_s.jpg" }
+      %td
+        %a{:href => "http://flickr.com/photos/#{stopped['author_id']}/#{stopped['photo_id']}"}= stopped["photo_id"]
+        
+%br
+
+%table{:width => "70%"}
+  %caption Stopped for a specific MP
+  %thead
+    %tr
+      %th Thumbnail
+      %th MP
+  %tbody
+  - @stoplist_mp_photos.each do |stopped|
+    %tr
+      %td
+        %img{ :src => "http://farm#{stopped["flickr_farm"]}.static.flickr.com/#{stopped["flickr_server"]}/#{stopped["photo_id"]}_#{stopped["flickr_secret"]}_s.jpg" }
+      %td
+        %a{:href => "http://flickr.com/photos/#{stopped['author_id']}/#{stopped['photo_id']}"}= stopped["name"]
+        
+%br        
+
+%table{:width => "70%"}
+  %caption Stopped Flickr accounts
+  %thead
+    %tr
+      %th Account
+  %tbody
+  - @stoplist_users.each do |stopped|
+    %tr
+      %td
+        %a{:href => "http://flickr.com/photos/#{stopped}"} #{stopped}
+
+%br
+
+%table{:width => "70%"}
+  %caption Stopped tags
+  %thead
+    %tr
+      %th Tag
+  %tbody
+  - @stoplist_tags.each do |stopped|
+    %tr
+      %td= stopped
+
+%br

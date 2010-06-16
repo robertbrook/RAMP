@@ -267,8 +267,15 @@ get "/admin/stoplist" do
   authorize!(ip)
 
   collection = MONGO_DB.collection("stoplist")
+    
+  #hashes
+  @stoplist_photos = collection.find({"photo_id" =>  /.+/, "name" => nil})
+  @stoplist_mp_photos = collection.find({"photo_id" =>  /.+/, "name" => /.+/})
+
+  #arrays
+  @stoplist_users = collection.find({"users" =>  /.+/}).next_document()["users"]
+  @stoplist_tags = collection.find({"tags" =>  /.+/}).next_document()["tags"]
   
-  @stoplist_all = collection.find()
   haml :stoplist
 end
 
@@ -324,12 +331,18 @@ get "/admin/add_to_stoplist/photo/:photo_id" do
   ip = @env["HTTP_X_REAL_IP"] unless ip
   authorize!(ip)
   
-  coll = MONGO_DB.collection("stoplist")
-  
   photo_id =  params[:photo_id]
-  new_photo_doc = {"photo_id" => "#{photo_id}"}  
+  
+  #get the flag values to move across
+  coll = MONGO_DB.collection("flags")
+  photo = coll.find("photo_id" => "#{photo_id}").next_document()
+  
+  #add a new document to the stoplist
+  coll = MONGO_DB.collection("stoplist")
+  new_photo_doc = {"photo_id" => "#{photo_id}", "flickr_secret" => "#{photo["flickr_secret"]}", "flickr_farm" => "#{photo["flickr_farm"]}", "flickr_server" => "#{photo["flickr_server"]}", "author_id" => "#{photo["author_id"]}"}
   coll.insert(new_photo_doc)
   
+  #remove the "old" document from the flags collection
   coll = MONGO_DB.collection("flags")
   coll.remove("photo_id" => "#{photo_id}")
   
@@ -349,9 +362,17 @@ get "/admin/add_to_stoplist/mp_photo/:mp_name/:photo_id" do
   mp_name.gsub!("  ", "-")
   
   photo_id =  params[:photo_id]
-  new_photo_doc = {"photo_id" => "#{photo_id}", "name" => "#{mp_name}"}
+  
+  #get the flag values to move across
+  coll = MONGO_DB.collection("flags")
+  photo = coll.find("photo_id" => "#{photo_id}", "name" => "#{mp_name}").next_document()
+  
+  #add a new document to the stoplist
+  coll = MONGO_DB.collection("stoplist")
+  new_photo_doc = {"photo_id" => "#{photo_id}", "name" => "#{mp_name}", "flickr_secret" => "#{photo["flickr_secret"]}", "flickr_farm" => "#{photo["flickr_farm"]}", "flickr_server" => "#{photo["flickr_server"]}", "author_id" => "#{photo["author_id"]}"}
   coll.insert(new_photo_doc)
   
+  #remove the "old" document from the flags collection
   coll = MONGO_DB.collection("flags")
   coll.remove("photo_id" => "#{photo_id}", "name" => "#{mp_name}")
   
