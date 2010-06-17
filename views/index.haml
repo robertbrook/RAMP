@@ -11,7 +11,7 @@
           %input{ :type => 'submit', :name => 'answer', :value => "#{mp["name"]}, #{mp["party"]} MP for #{mp["constituency"]}"}
           %input{ :type => 'hidden', :name => 'guess', :value => "#{mp['number']}" }
           %input{ :type => 'hidden', :name => 'status', :value => "#{@status}" }
-  .stuff
+  %div
     %p <a href='/'>Pass, show me another</a>
     %div
       %center
