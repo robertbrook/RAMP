@@ -8,7 +8,6 @@ require 'memcached'
 require 'mongo'
 require 'htmlentities'
 require 'lib/MP'
-require 'unicode'
 require 'helpers/partials'
 require 'helpers/auth'
 
