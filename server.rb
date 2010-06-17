@@ -6,7 +6,9 @@ require 'sass'
 require 'fastercsv'
 require 'memcached'
 require 'mongo'
+require 'htmlentities'
 require 'lib/MP'
+require 'unicode'
 require 'helpers/partials'
 require 'helpers/auth'
 
@@ -448,7 +450,11 @@ private
   def setup_mp(number)
     data_line = MPS_DATA[number]
     mp_data = FasterCSV::parse_line(data_line)
-    MP.new(mp_data[1..2].join(" ").squeeze(" "), mp_data[3], mp_data[4], mp_data[5], number)
+    
+    valid_string = Iconv.iconv('utf-8', 'latin1', mp_data[1..2].join(" ").squeeze(" "))
+    mp_name = HTMLEntities.new.encode(valid_string, :named)
+    
+    MP.new(mp_name, mp_data[3], mp_data[4], mp_data[5], number)
   end
   
   def get_photos(random_mp)
