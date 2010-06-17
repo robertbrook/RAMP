@@ -3,9 +3,10 @@
     %title Recognise An MP?
     %link{:type => "text/css", :rel => "stylesheet", :href => "/stylesheets/styles.css"}
   %body
-    %h1 Recognise An MP?
-    %p.score #{session[:attempts]} photos, #{session[:passes]} passes, #{session[:correct]} correct
-    = yield
-    - if request.path_info != "/about"
-      #footer <a href="about">More about this site</a>.    
+    .container
+      %h1 Recognise An MP?
+      %p.score #{session[:attempts]} photos, #{session[:passes]} passes, #{session[:correct]} correct
+      = yield
+      - if request.path_info != "/about"
+        #footer <a href="about">More about this site</a>.    
       
