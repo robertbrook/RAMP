@@ -4,3 +4,4 @@ oauth
 mongo
 bson
 bson_ext
+htmlentities
