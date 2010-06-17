@@ -25,7 +25,7 @@
             &mdash;
             = photo["owner"]["username"]
           -if @flagged and @flagged.include?(photo["id"])
-            %span.flagged
+            .flagged
               This photo has been flagged
           -else
             %form{ :method => 'post', :action => '/' }
