@@ -341,7 +341,11 @@ get "/admin/clear_flags/photo/:photo_id" do
   
   coll.remove("photo_id" => "#{params[:photo_id]}")
   
-  redirect "/admin"
+  if params[:return]
+    redirect "#{params[:return]}"
+  else
+    redirect "/admin"
+  end
 end
 
 get "/admin/clear_flags/user/:user_id" do
@@ -351,7 +355,11 @@ get "/admin/clear_flags/user/:user_id" do
   
   coll.remove("author_id" => "#{params[:user_id]}")
   
-  redirect "/admin"
+  if params[:return]
+    redirect "#{params[:return]}"
+  else
+    redirect "/admin"
+  end
 end
 
 get "/admin/add_to_stoplist/photo/:photo_id" do
@@ -435,7 +443,11 @@ get "/admin/add_to_stoplist/user/:user_id" do
   coll = MONGO_DB.collection("flags")
   coll.remove("author_id" => "#{params[:user_id]}")
   
-  redirect "/admin"
+  if params[:return]
+    redirect "#{params[:return]}"
+  else
+    redirect "/admin"
+  end
 end
 
 get '/login' do
