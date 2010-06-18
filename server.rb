@@ -300,7 +300,13 @@ get "/admin/account/:account_id" do
   
   coll = MONGO_DB.collection("flags")
   results = coll.find({"author_id" => "#{@account_id}"})
-  @account_name = results.next_document()["author_name"]
+  first = results.next_document()
+  
+  unless first
+    redirect "/admin"
+  else
+    @account_name = first["author_name"]
+  end
   
   flagged = coll.group(["name", "photo_id", "author_id", "flickr_secret", "flickr_farm", "flickr_server"], {"author_id" => "#{@account_id}"}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
   @flagged = flagged.sort_by { |x| -x["flags"] }
@@ -410,7 +416,14 @@ get "/admin/add_to_stoplist/user/:user_id" do
   coll = MONGO_DB.collection("stoplist")
   
   user_doc = coll.find("users" => /.+/)
-  users = user_doc.next_document["users"]
+  
+  first = user_doc.next_document()
+  
+  unless first
+    redirect "/admin"
+  else
+    users = first["users"]
+  end
 
   unless users.include?([params[:user_id]])
     users << params[:user_id]
