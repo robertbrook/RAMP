@@ -1,4 +1,8 @@
-%h2= #{@account_name}
+%h2= "#{@account_name}"
+
+%a{ :href => "/admin" }= "Return to the main admin page"
+%br
+%br
 
 %a{ :href => "http://flickr.com/photos/#{@account_id}" }= "View #{@account_name}'s photos on Flickr"
 %br
