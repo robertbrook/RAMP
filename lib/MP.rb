@@ -154,6 +154,8 @@ class MP
     constituency.gsub!(",","")
     constituency.gsub!("(","")
     constituency.gsub!(")","")
+    constituency.gsub!("ô", "o")
+    constituency.gsub!("&ocirc;", "o")
     link = "http://findyourmp.parliament.uk/constituencies/#{constituency}"
   end
   
