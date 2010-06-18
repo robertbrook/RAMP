@@ -263,11 +263,8 @@ get "/about" do
 end
 
 get "/admin/stoplist" do
-  ip = @env["REMOTE_HOST"]
-  ip = @env["REMOTE_ADDR"] unless ip
-  ip = @env["HTTP_X_REAL_IP"] unless ip
-  authorize!(ip)
-
+  do_auth()
+  
   collection = MONGO_DB.collection("stoplist")
     
   #hashes
@@ -282,10 +279,7 @@ get "/admin/stoplist" do
 end
 
 get "/admin" do
-  ip = @env["REMOTE_HOST"]
-  ip = @env["REMOTE_ADDR"] unless ip
-  ip = @env["HTTP_X_REAL_IP"] unless ip
-  authorize!(ip)
+  do_auth()
 
   coll = MONGO_DB.collection("flags")
   
@@ -302,10 +296,7 @@ get "/admin" do
 end
 
 get "/admin/clear_flags/photo/:photo_id" do
-  ip = @env["REMOTE_HOST"]
-  ip = @env["REMOTE_ADDR"] unless ip
-  ip = @env["HTTP_X_REAL_IP"] unless ip
-  authorize!(ip)
+  do_auth()
   
   coll = MONGO_DB.collection("flags")
   
@@ -315,10 +306,7 @@ get "/admin/clear_flags/photo/:photo_id" do
 end
 
 get "/admin/clear_flags/user/:user_id" do
-  ip = @env["REMOTE_HOST"]
-  ip = @env["REMOTE_ADDR"] unless ip
-  ip = @env["HTTP_X_REAL_IP"] unless ip
-  authorize!(ip)
+  do_auth()
   
   coll = MONGO_DB.collection("flags")
   
@@ -328,10 +316,7 @@ get "/admin/clear_flags/user/:user_id" do
 end
 
 get "/admin/add_to_stoplist/photo/:photo_id" do
-  ip = @env["REMOTE_HOST"]
-  ip = @env["REMOTE_ADDR"] unless ip
-  ip = @env["HTTP_X_REAL_IP"] unless ip
-  authorize!(ip)
+  do_auth()
   
   photo_id =  params[:photo_id]
   
@@ -352,10 +337,7 @@ get "/admin/add_to_stoplist/photo/:photo_id" do
 end
 
 get "/admin/add_to_stoplist/mp_photo/:mp_name/:photo_id" do
-  ip = @env["REMOTE_HOST"]
-  ip = @env["REMOTE_ADDR"] unless ip
-  ip = @env["HTTP_X_REAL_IP"] unless ip
-  authorize!(ip)
+  do_auth()
   
   coll = MONGO_DB.collection("stoplist")
   
@@ -382,10 +364,7 @@ get "/admin/add_to_stoplist/mp_photo/:mp_name/:photo_id" do
 end
 
 get "/admin/add_to_stoplist/user/:user_id" do
-  ip = @env["REMOTE_HOST"]
-  ip = @env["REMOTE_ADDR"] unless ip
-  ip = @env["HTTP_X_REAL_IP"] unless ip
-  authorize!(ip)
+  do_auth()
   
   coll = MONGO_DB.collection("stoplist")
   
@@ -429,6 +408,12 @@ post '/login' do
 end
 
 private
+  def do_auth
+    ip = @env["REMOTE_HOST"]
+    ip = @env["REMOTE_ADDR"] unless ip
+    ip = @env["HTTP_X_REAL_IP"] unless ip
+    authorize!(ip)
+  end
   
   def random_mp_num write_back
     unless session[:mp_nums]
