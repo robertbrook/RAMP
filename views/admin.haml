@@ -1,53 +1,42 @@
 %p You are an admin user on RAMP. You can add an account or an individual photo to the stop list.
 
-%table{:width => "70%"}
+%hr
+
+%table{:width => "60%"}
   %caption Flagged Accounts
   %thead
     %tr
       %th Flags
       %th Account
-      %th
-      %th
   %tbody
   - @flags_by_flickr_account[0..9].each do |flagged|
     %tr
       %td= "#{flagged["flags"].to_i}"
       %td
-        %a{:href => "http://flickr.com/photos/#{flagged['author_id']}"} #{flagged["author_name"]}
-      %td
-        %a{:href => "admin/clear_flags/user/#{flagged["author_id"]}"} Clear
-      %td
-        %a{:href => "admin/add_to_stoplist/user/#{flagged["author_id"]}"} Stop
+        %a{:href => "/admin/account/#{flagged['author_id']}"} #{flagged["author_name"]}
 
-%br
+%hr
 
-%table{:width => "80%"}
+%table{:width => "60%"}
   %caption Images flagged for an MP
   %thead
     %tr
       %th Flags
-      %th Thumbnail
-      %th Photo
-      %th
+      %th MP
   %tbody
   - @flags_by_mp[0..9].each do |flagged|
     %tr
       %td= flagged["flags"].to_i
       %td
-        %img{ :src => "http://farm#{flagged["flickr_farm"]}.static.flickr.com/#{flagged["flickr_server"]}/#{flagged["photo_id"]}_#{flagged["flickr_secret"]}_s.jpg" }
-      %td
-        %a{:href => "http://flickr.com/photos/#{flagged['author_id']}/#{flagged['photo_id']}"}= flagged["name"]
-      %td
-        %a{:href => "admin/add_to_stoplist/mp_photo/#{flagged['name'].gsub("-","--").gsub(" ","-")}/#{flagged["photo_id"]}"} Stop <br /> (named MP only)
+        %a{:href => "/admin/mp/#{flagged['name'].downcase().gsub("-","--").gsub(" ","-")}"}= flagged["name"]
 
-%br
+%hr
 
-%table{:width => "80%"}
+%table{:width => "60%"}
   %caption Flagged Images
   %thead
     %tr
       %th Flags
-      %th Thumbnail
       %th Photo
       %th
       %th
@@ -56,9 +45,8 @@
     %tr
       %td= flagged["flags"].to_i
       %td
-        %img{ :src => "http://farm#{flagged["flickr_farm"]}.static.flickr.com/#{flagged["flickr_server"]}/#{flagged["photo_id"]}_#{flagged["flickr_secret"]}_s.jpg" }
-      %td
-        %a{:href => "http://flickr.com/photos/#{flagged['author_id']}/#{flagged['photo_id']}"}= flagged["photo_id"]
+        %a{:href => "http://flickr.com/photos/#{flagged['author_id']}/#{flagged['photo_id']}"}
+          %img{ :src => "http://farm#{flagged["flickr_farm"]}.static.flickr.com/#{flagged["flickr_server"]}/#{flagged["photo_id"]}_#{flagged["flickr_secret"]}_s.jpg" }
       %td
         %a{:href => "admin/clear_flags/photo/#{flagged["photo_id"]}"} Clear
       %td

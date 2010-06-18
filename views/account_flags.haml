@@ -1,0 +1,29 @@
+%h2= #{@account_name}
+
+%a{ :href => "http://flickr.com/photos/#{@account_id}" }= "View #{@account_name}'s photos on Flickr"
+%br
+%a{ :href => "/admin/add_to_stoplist/user/#{@account_id}" }= "Add #{@account_name} to stop list"
+%br
+%br
+
+%table{:width => "60%"}
+  %caption Flagged images for #{@account_name}
+  %thead
+    %tr
+      %th Flags
+      %th Photo
+      %th
+      %th
+  %tbody
+  - @flagged.each do |flagged|
+    %tr
+      %td= flagged["flags"].to_i
+      %td
+        %a{:href => "http://flickr.com/photos/#{flagged['author_id']}/#{flagged['photo_id']}"}
+          %img{ :src => "http://farm#{flagged["flickr_farm"]}.static.flickr.com/#{flagged["flickr_server"]}/#{flagged["photo_id"]}_#{flagged["flickr_secret"]}_s.jpg" }
+      %td
+        %a{:href => "/admin/clear_flags/photo/#{flagged["photo_id"]}?return=/admin/account/#{flagged['author_id']}"} Clear
+      %td
+        %a{:href => "/admin/add_to_stoplist/photo/#{flagged["photo_id"]}?return=/admin/account/#{flagged['author_id']}"} Stop
+              
+%br

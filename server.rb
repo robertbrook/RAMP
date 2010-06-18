@@ -283,7 +283,7 @@ get "/admin" do
 
   coll = MONGO_DB.collection("flags")
   
-  flags_by_mp = coll.group(["name", "photo_id", "author_id", "flickr_secret", "flickr_farm", "flickr_server"], {"name" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
+  flags_by_mp = coll.group(["name"], {"name" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
   @flags_by_mp = flags_by_mp.sort_by { |x| -x["flags"] }
   
   flags_by_flickr_account = coll.group(["author_id", "author_name"], {"author_id" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
@@ -293,6 +293,39 @@ get "/admin" do
   @flags_by_photos = flags_by_photos.sort_by { |x| -x["flags"] }
   
   haml :admin
+end
+
+get "/admin/account/:account_id" do
+  @account_id = params[:account_id]
+  
+  coll = MONGO_DB.collection("flags")
+  results = coll.find({"author_id" => "#{@account_id}"})
+  @account_name = results.next_document()["author_name"]
+  
+  flagged = coll.group(["name", "photo_id", "author_id", "flickr_secret", "flickr_farm", "flickr_server"], {"author_id" => "#{@account_id}"}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
+  @flagged = flagged.sort_by { |x| -x["flags"] }
+  
+  haml :account_flags
+end
+
+get "/admin/mp/:mp_name" do
+  mp_name = params[:mp_name]
+  display_name = mp_name.gsub("-", " ")
+  display_name.gsub!("  ", "-")
+  
+  a2 = []
+  a1 = display_name.split(" ")
+  a1.each do |name|
+    a2 << name.capitalize
+  end
+  
+  @mp_name = a2.join(" ")
+  
+  coll = MONGO_DB.collection("flags")
+  flagged = coll.group(["name", "photo_id", "author_id", "flickr_secret", "flickr_farm", "flickr_server"], {"name" => "#{@mp_name}"}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
+  @flagged = flagged.sort_by { |x| -x["flags"] }
+  
+  haml :mp_flags
 end
 
 get "/admin/clear_flags/photo/:photo_id" do
@@ -333,7 +366,11 @@ get "/admin/add_to_stoplist/photo/:photo_id" do
   coll = MONGO_DB.collection("flags")
   coll.remove("photo_id" => "#{photo_id}")
   
-  redirect "/admin"
+  if params[:return]
+    redirect "#{params[:return]}"
+  else
+    redirect "/admin"
+  end
 end
 
 get "/admin/add_to_stoplist/mp_photo/:mp_name/:photo_id" do
@@ -360,7 +397,11 @@ get "/admin/add_to_stoplist/mp_photo/:mp_name/:photo_id" do
   coll = MONGO_DB.collection("flags")
   coll.remove("photo_id" => "#{photo_id}", "name" => "#{mp_name}")
   
-  redirect "/admin"
+  if params[:return]
+    redirect "/#{params[:return]}"
+  else
+    redirect "/admin"
+  end
 end
 
 get "/admin/add_to_stoplist/user/:user_id" do
