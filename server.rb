@@ -371,14 +371,16 @@ get "/admin/add_to_stoplist/photo/:photo_id" do
   coll = MONGO_DB.collection("flags")
   photo = coll.find("photo_id" => "#{photo_id}").next_document()
   
+  if photo
   #add a new document to the stoplist
-  coll = MONGO_DB.collection("stoplist")
-  new_photo_doc = {"photo_id" => "#{photo_id}", "flickr_secret" => "#{photo["flickr_secret"]}", "flickr_farm" => "#{photo["flickr_farm"]}", "flickr_server" => "#{photo["flickr_server"]}", "author_id" => "#{photo["author_id"]}"}
-  coll.insert(new_photo_doc)
+    coll = MONGO_DB.collection("stoplist")
+    new_photo_doc = {"photo_id" => "#{photo_id}", "flickr_secret" => "#{photo["flickr_secret"]}", "flickr_farm" => "#{photo["flickr_farm"]}", "flickr_server" => "#{photo["flickr_server"]}", "author_id" => "#{photo["author_id"]}"}
+    coll.insert(new_photo_doc)
   
-  #remove the "old" document from the flags collection
-  coll = MONGO_DB.collection("flags")
-  coll.remove("photo_id" => "#{photo_id}")
+    #remove the "old" document from the flags collection
+    coll = MONGO_DB.collection("flags")
+    coll.remove("photo_id" => "#{photo_id}")
+  end
   
   if params[:return]
     redirect "#{params[:return]}"
