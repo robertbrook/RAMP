@@ -334,7 +334,7 @@ get "/admin/mp/:mp_name" do
   haml :mp_flags
 end
 
-get "/admin/clear_flags/photo/:photo_id" do
+get "/admin/unflag/photo/:photo_id" do
   do_auth()
   
   coll = MONGO_DB.collection("flags")
@@ -348,7 +348,7 @@ get "/admin/clear_flags/photo/:photo_id" do
   end
 end
 
-get "/admin/clear_flags/user/:user_id" do
+get "/admin/unflag/user/:user_id" do
   do_auth()
   
   coll = MONGO_DB.collection("flags")
@@ -376,11 +376,11 @@ get "/admin/add_to_stoplist/photo/:photo_id" do
     coll = MONGO_DB.collection("stoplist")
     new_photo_doc = {"photo_id" => "#{photo_id}", "flickr_secret" => "#{photo["flickr_secret"]}", "flickr_farm" => "#{photo["flickr_farm"]}", "flickr_server" => "#{photo["flickr_server"]}", "author_id" => "#{photo["author_id"]}"}
     coll.insert(new_photo_doc)
-  
-    #remove the "old" document from the flags collection
-    coll = MONGO_DB.collection("flags")
-    coll.remove("photo_id" => "#{photo_id}")
   end
+  
+  #remove the "old" document from the flags collection
+  coll = MONGO_DB.collection("flags")
+  coll.remove("photo_id" => "#{photo_id}")
   
   if params[:return]
     redirect "#{params[:return]}"

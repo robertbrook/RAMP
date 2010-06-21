@@ -21,7 +21,7 @@
         %a{:href => "http://flickr.com/photos/#{flagged['author_id']}/#{flagged['photo_id']}"}
           %img{ :src => "http://farm#{flagged["flickr_farm"]}.static.flickr.com/#{flagged["flickr_server"]}/#{flagged["photo_id"]}_#{flagged["flickr_secret"]}_s.jpg" }
       %td
-        %a{:href => "/admin/clear_flags/photo/#{flagged["photo_id"]}?return=/admin/mp/#{params[:mp_name]}"} Clear
+        %a{:href => "/admin/unflag/photo/#{flagged["photo_id"]}?return=/admin/mp/#{params[:mp_name]}"} Unflag
       %td
         %a{:href => "/admin/add_to_stoplist/photo/#{flagged["photo_id"]}?return=/admin/mp/#{params[:mp_name]}"} Stop
       %td
