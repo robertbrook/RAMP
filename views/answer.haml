@@ -6,9 +6,9 @@
     You chose #{@chosen.name}
 
 %p
-  It was #{@mp_json['name']}
+  It was #{@mp.json['name']}
 
 %p
-  =partial(:vcard, :layout => false, :collection => [@mp_json] )
+  =partial(:vcard, :layout => false, :collection => [@mp.json] )
 
 %p <a href='/'>Ok, show me another</a>

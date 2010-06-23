@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'json'
 require 'mongo'
+require 'memcached'
 require 'yaml'
 require 'oauth'
 
@@ -26,6 +27,7 @@ class MP
   end
   
   TOKEN = get_yql_access_token()
+  CACHE = Memcached.new()
   
   def self.get_mongo_connection
     if ENV['RACK_ENV'] && ENV['RACK_ENV'] == 'production'
@@ -124,9 +126,20 @@ class MP
     @twfy_url = twfy_url
     @number = number
   end
-
+  
+  def json
+    begin
+      mp_cache = CACHE.get("mp_#{self.number}")
+      result = JSON.parse(mp_cache)
+    rescue Memcached::NotFound
+      result = JSON.parse(self.to_json)
+      CACHE.add("mp_#{self.number}", JSON.generate(result))
+    end
+    result
+  end
+  
   def to_json
-    %Q|{"name":"#{name}","number":#{number},"party":"#{party}","constituency":"#{constituency}","twfy_url":"#{twfy_url}","twfy_photo":"#{twfy_photo}","wikipedia_url":"#{wikipedia_url}","wikipedia_photo":"#{wikipedia_photo}"}|
+    %Q|{"name":"#{name}","number":#{number},"party":"#{party}","constituency":"#{constituency}","twfy_url":"#{twfy_url}","twfy_photo":"#{twfy_photo}","wikipedia_url":"#{wikipedia_url}","wikipedia_photo":"#{wikipedia_photo}","fymp_url":"#{fymp_url}"}|
   end
 
   def lookup_flickr_photo_license
