@@ -72,13 +72,7 @@ get '/' do
   @random_mp = setup_mp(@number)
   @photos = get_photos(@random_mp)
 
-  begin
-    mp_cache = CACHE.get("mp_#{@number}")
-    @random_mp_json = JSON.parse(mp_cache)
-  rescue Memcached::NotFound
-    @random_mp_json = JSON.parse(@random_mp.to_json)
-    CACHE.add("mp_#{@number}", JSON.generate(@random_mp_json))
-  end
+  @random_mp_json = get_mp_json(@number, @random_mp)
 
   status = []
 
@@ -86,24 +80,12 @@ get '/' do
     mp1_number = random_mp_num(false)
     alt_mp1 = setup_mp(mp1_number)
     alt_mp1_json = ""
-    begin
-      mp_cache = CACHE.get("mp_#{mp1_number}")
-      alt_mp1_json = JSON.parse(mp_cache)
-    rescue Memcached::NotFound
-      alt_mp1_json = JSON.parse(alt_mp1.to_json)
-      CACHE.add("mp_#{mp1_number}", JSON.generate(alt_mp1_json))
-    end
+    alt_mp1_json = get_mp_json(mp1_number, alt_mp1)
     
     mp2_number = random_mp_num(false)
     alt_mp2 = setup_mp(mp2_number)
     alt_mp2_json = ""
-    begin
-      mp_cache = CACHE.get("mp_#{mp2_number}")
-      alt_mp2_json = JSON.parse(mp_cache)
-    rescue Memcached::NotFound
-      alt_mp2_json = JSON.parse(alt_mp2.to_json)
-      CACHE.add("mp_#{mp2_number}", JSON.generate(alt_mp2_json))
-    end
+    alt_mp2_json = get_mp_json(mp2_number, alt_mp2)
   
     pos = rand(3)
   
@@ -172,37 +154,19 @@ post "/" do
   
   flag_photo(photo_id, user_id, user_name, mp_name, farm, server, secret)
   
-  begin
-    mp_cache = CACHE.get("mp_#{@number}")
-    @random_mp_json = JSON.parse(mp_cache)
-  rescue Memcached::NotFound
-    @random_mp_json = JSON.parse(@random_mp.to_json)
-    CACHE.add("mp_#{@number}", JSON.generate(@random_mp_json))
-  end
+  @random_mp_json = get_mp_json(@number, @random_mp)
 
   if @photos.size > 0
     mp1_number = status[0].to_i
     alt_mp1 = setup_mp(mp1_number)
     alt_mp1_json = ""
-    begin
-      mp_cache = CACHE.get("mp_#{mp1_number}")
-      alt_mp1_json = JSON.parse(mp_cache)
-    rescue Memcached::NotFound
-      alt_mp1_json = JSON.parse(alt_mp1.to_json)
-      CACHE.add("mp_#{mp1_number}", JSON.generate(alt_mp1_json))
-    end
+    alt_mp1_json = get_mp_json(mp1_number, alt_mp1)
     
     mp2_number = status[1].to_i
     alt_mp2 = setup_mp(mp2_number)
     alt_mp2_json = ""
-    begin
-      mp_cache = CACHE.get("mp_#{mp2_number}")
-      alt_mp2_json = JSON.parse(mp_cache)
-    rescue Memcached::NotFound
-      alt_mp2_json = JSON.parse(alt_mp2.to_json)
-      CACHE.add("mp_#{mp2_number}", JSON.generate(alt_mp2_json))
-    end
-  
+    alt_mp2_json = get_mp_json(mp2_number, alt_mp2)
+
     pos = rand(3)
   
     @mps = []
@@ -232,14 +196,7 @@ post "/answer" do
   @mp = setup_mp(@answer.to_i)
   @chosen = setup_mp(@guess.to_i)
   
-  begin
-    mp_cache = CACHE.get("mp_#{@answer}")
-    @mp_json = JSON.parse(mp_cache)
-  rescue Memcached::NotFound
-    @mp_json = JSON.parse(@mp.to_json)
-    CACHE.add("mp_#{@answer}", JSON.generate(@mp_json))
-  end
-  
+  @mp_json = get_mp_json(@answer, @mp)
   
   unless session[:last] == @status
     if @guess == @answer
@@ -528,6 +485,17 @@ private
       photos = response["results"]["photo"]
     end
     photos
+  end
+  
+  def get_mp_json(number, mp)
+    begin
+      mp_cache = CACHE.get("mp_#{number}")
+      result = JSON.parse(mp_cache)
+    rescue Memcached::NotFound
+      result = JSON.parse(mp.to_json)
+      CACHE.add("mp_#{number}", JSON.generate(result))
+    end
+    result
   end
 
   def flag_photo(photo_id, user_id, user_name, mp_name, farm, server, secret)
