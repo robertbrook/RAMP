@@ -236,7 +236,7 @@ get "/admin/account/:account_id" do
   flagged = coll.group(["name", "photo_id", "author_id", "flickr_secret", "flickr_farm", "flickr_server"], {"author_id" => "#{@account_id}"}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
   @flagged = flagged.sort_by { |x| -x["flags"] }
   
-  haml :account_flags
+  haml :admin_account_flags
 end
 
 get "/admin/mp/:mp_name" do
@@ -256,7 +256,7 @@ get "/admin/mp/:mp_name" do
   flagged = coll.group(["name", "photo_id", "author_id", "author_name", "flickr_secret", "flickr_farm", "flickr_server"], {"name" => "#{@mp_name}"}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
   @flagged = flagged.sort_by { |x| -x["flags"] }
   
-  haml :mp_flags
+  haml :admin_mp_flags
 end
 
 get "/admin/unflag/photo/:photo_id" do
@@ -400,7 +400,7 @@ get "/admin/stoplist" do
   @stoplist_users = collection.find({"users" =>  /.+/}).next_document()["users"]
   @stoplist_tags = collection.find({"tags" =>  /.+/}).next_document()["tags"]
   
-  haml :stoplist
+  haml :admin_stoplist
 end
 
 get '/login' do
