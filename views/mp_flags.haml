@@ -28,6 +28,6 @@
       %td
         %a{:href => "/admin/add_to_stoplist/photo/#{flagged["photo_id"]}?return=/admin/mp/#{params[:mp_name]}"} Stop
       %td
-        %a{:href => "admin/add_to_stoplist/mp_photo/#{flagged['name'].downcase().gsub("-","--").gsub(" ","-")}/#{flagged["photo_id"]}?return=/admin/mp/#{params[:mp_name]}"} Stop <br /> (named MP only)     
+        %a{:href => "/admin/add_to_stoplist/mp_photo/#{flagged['name'].downcase().gsub("-","--").gsub(" ","-")}/#{flagged["photo_id"]}?return=/admin/mp/#{params[:mp_name]}"} Stop <br /> (named MP only)     
 
 %br

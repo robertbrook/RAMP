@@ -323,23 +323,33 @@ get "/admin/add_to_stoplist/mp_photo/:mp_name/:photo_id" do
   mp_name.gsub!("-", " ")
   mp_name.gsub!("  ", "-")
   
+  a2 = []
+  a1 = mp_name.split(" ")
+  a1.each do |name|
+    a2 << name.capitalize
+  end
+  
+  mp_name = a2.join(" ")
+  
   photo_id =  params[:photo_id]
   
   #get the flag values to move across
   coll = MONGO_DB.collection("flags")
   photo = coll.find("photo_id" => "#{photo_id}", "name" => "#{mp_name}").next_document()
   
-  #add a new document to the stoplist
-  coll = MONGO_DB.collection("stoplist")
-  new_photo_doc = {"photo_id" => "#{photo_id}", "name" => "#{mp_name}", "flickr_secret" => "#{photo["flickr_secret"]}", "flickr_farm" => "#{photo["flickr_farm"]}", "flickr_server" => "#{photo["flickr_server"]}", "author_id" => "#{photo["author_id"]}"}
-  coll.insert(new_photo_doc)
+  if photo
+    #add a new document to the stoplist
+    coll = MONGO_DB.collection("stoplist")
+    new_photo_doc = {"photo_id" => "#{photo_id}", "name" => "#{mp_name}", "flickr_secret" => "#{photo["flickr_secret"]}", "flickr_farm" => "#{photo["flickr_farm"]}", "flickr_server" => "#{photo["flickr_server"]}", "author_id" => "#{photo["author_id"]}"}
+    coll.insert(new_photo_doc)
+  end
   
   #remove the "old" document from the flags collection
   coll = MONGO_DB.collection("flags")
   coll.remove("photo_id" => "#{photo_id}", "name" => "#{mp_name}")
   
   if params[:return]
-    redirect "/#{params[:return]}"
+    redirect "#{params[:return]}"
   else
     redirect "/admin"
   end
