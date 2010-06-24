@@ -32,21 +32,27 @@
 
 %hr
 
-%table{:width => "60%"}
+%table.detail
   %caption Flagged Images
   %thead
     %tr
       %th Flags
       %th Photo
-      %th
-      %th
+      %th Details
+      %th{:colspan => 2} Action
   %tbody
   - @flags_by_photos[0..9].each do |flagged|
     %tr
       %td= flagged["flags"].to_i
       %td
         %a{:href => "http://flickr.com/photos/#{flagged['author_id']}/#{flagged['photo_id']}"}
-          %img{ :src => "http://farm#{flagged["flickr_farm"]}.static.flickr.com/#{flagged["flickr_server"]}/#{flagged["photo_id"]}_#{flagged["flickr_secret"]}_s.jpg" }
+          %img{:alt => "#{flagged['name']}", :title => "#{flagged['name']}", :src => "http://farm#{flagged["flickr_farm"]}.static.flickr.com/#{flagged["flickr_server"]}/#{flagged["photo_id"]}_#{flagged["flickr_secret"]}_s.jpg" }
+      %td 
+        %a{:href => "/admin/mp/#{flagged['name'].downcase().gsub("-","--").gsub(" ","-")}"} "#{flagged["name"]}"
+        %br
+        photo credit:
+        %br
+        %a{:href => "/admin/account/#{flagged['author_id']}"} #{flagged["author_name"]}
       %td
         %a{:href => "admin/unflag/photo/#{flagged["photo_id"]}"} Unflag
       %td

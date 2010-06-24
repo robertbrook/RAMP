@@ -4,27 +4,30 @@
 %br
 %br
 
-%table{:width => "80%"}
+%table.detail
   %caption Flagged images for #{@mp_name}
   %thead
     %tr
       %th Flags
       %th Photo
-      %th
-      %th
-      %th
+      %th Details
+      %th{:colspan => 3} Action
   %tbody
   - @flagged.each do |flagged|
     %tr
       %td= flagged["flags"].to_i
       %td
         %a{:href => "http://flickr.com/photos/#{flagged['author_id']}/#{flagged['photo_id']}"}
-          %img{ :src => "http://farm#{flagged["flickr_farm"]}.static.flickr.com/#{flagged["flickr_server"]}/#{flagged["photo_id"]}_#{flagged["flickr_secret"]}_s.jpg" }
+          %img{ :alt => "#{flagged['name']}", :src => "http://farm#{flagged["flickr_farm"]}.static.flickr.com/#{flagged["flickr_server"]}/#{flagged["photo_id"]}_#{flagged["flickr_secret"]}_s.jpg" }
+      %td
+        photo credit:
+        %br
+        %a{:href => "/admin/account/#{flagged['author_id']}"} #{flagged["author_name"]}
       %td
         %a{:href => "/admin/unflag/photo/#{flagged["photo_id"]}?return=/admin/mp/#{params[:mp_name]}"} Unflag
       %td
         %a{:href => "/admin/add_to_stoplist/photo/#{flagged["photo_id"]}?return=/admin/mp/#{params[:mp_name]}"} Stop
       %td
-        %a{:href => "admin/add_to_stoplist/mp_photo/#{flagged['name'].downcase().gsub("-","--").gsub(" ","-")}/#{flagged["photo_id"]}?return=/admin/mp/#{params[:mp_name]}"} Stop <br /> (named MP only)
-        
+        %a{:href => "admin/add_to_stoplist/mp_photo/#{flagged['name'].downcase().gsub("-","--").gsub(" ","-")}/#{flagged["photo_id"]}?return=/admin/mp/#{params[:mp_name]}"} Stop <br /> (named MP only)     
+
 %br
