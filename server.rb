@@ -408,7 +408,9 @@ get "/admin/stoplist" do
   @stoplist_mp_photos = collection.find({"photo_id" =>  /.+/, "name" => /.+/})
 
   #arrays
-  @stoplist_users = collection.find({"users" =>  /.+/}).next_document()["users"]
+  userlist = collection.find({"users" =>  /.+/}).next_document()
+  @stoplist_users = userlist["users"]
+  @stoplist_usernames = userlist["users_names"]
   @stoplist_tags = collection.find({"tags" =>  /.+/}).next_document()["tags"]
   
   haml :admin_stoplist

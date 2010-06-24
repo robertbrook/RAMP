@@ -38,10 +38,12 @@
     %tr
       %th Account
   %tbody
+  - i = 0
   - @stoplist_users.each do |stopped|
     %tr
       %td
-        %a{:href => "http://flickr.com/photos/#{stopped}"} #{stopped}
+        %a{:href => "http://flickr.com/photos/#{stopped}"}= @stoplist_usernames[i]
+    - i += 1
 
 %br
 
