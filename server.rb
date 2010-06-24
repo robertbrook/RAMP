@@ -361,20 +361,31 @@ get "/admin/add_to_stoplist/user/:user_id" do
   coll = MONGO_DB.collection("stoplist")
   
   user_doc = coll.find("users" => /.+/)
-  
   first = user_doc.next_document()
   
   unless first
     redirect "/admin"
   else
     users = first["users"]
+    names = first["users_names"]
   end
 
+  coll = MONGO_DB.collection("flags")
   unless users.include?([params[:user_id]])
+    flags = coll.find("author_id" => "#{params[:user_id]}")
+    first = flags.next_document()
+    if first
+      user_name = first["author_name"]
+    else
+      user_name = ""
+    end
     users << params[:user_id]
+    names << user_name
   
-    new_user_doc = {"users" => users}
-    coll.update({ "users" => /.+/}, new_user_doc)
+    new_user_doc = {"users" => users, "users_names" => names}
+    
+    coll = MONGO_DB.collection("stoplist")
+    meep = coll.update({ "users" => /.+/}, new_user_doc)
   end
   
   coll = MONGO_DB.collection("flags")
