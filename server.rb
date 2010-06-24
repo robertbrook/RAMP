@@ -203,22 +203,6 @@ get "/about" do
   haml :about
 end
 
-get "/admin/stoplist" do
-  do_auth()
-  
-  collection = MONGO_DB.collection("stoplist")
-    
-  #hashes
-  @stoplist_photos = collection.find({"photo_id" =>  /.+/, "name" => nil})
-  @stoplist_mp_photos = collection.find({"photo_id" =>  /.+/, "name" => /.+/})
-
-  #arrays
-  @stoplist_users = collection.find({"users" =>  /.+/}).next_document()["users"]
-  @stoplist_tags = collection.find({"tags" =>  /.+/}).next_document()["tags"]
-  
-  haml :stoplist
-end
-
 get "/admin" do
   do_auth()
 
@@ -391,6 +375,22 @@ get "/admin/add_to_stoplist/user/:user_id" do
   else
     redirect "/admin"
   end
+end
+
+get "/admin/stoplist" do
+  do_auth()
+  
+  collection = MONGO_DB.collection("stoplist")
+    
+  #hashes
+  @stoplist_photos = collection.find({"photo_id" =>  /.+/, "name" => nil})
+  @stoplist_mp_photos = collection.find({"photo_id" =>  /.+/, "name" => /.+/})
+
+  #arrays
+  @stoplist_users = collection.find({"users" =>  /.+/}).next_document()["users"]
+  @stoplist_tags = collection.find({"tags" =>  /.+/}).next_document()["tags"]
+  
+  haml :stoplist
 end
 
 get '/login' do

@@ -9,6 +9,7 @@ module Sinatra
       end
 
       def authorize!(ip_address)
+        @is_admin = true
         unless authorized?
           if ENV['RACK_ENV'] && ENV['RACK_ENV'] == 'production'
             user = ENV['ADMIN_USER']
