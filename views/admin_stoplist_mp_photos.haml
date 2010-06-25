@@ -1,0 +1,21 @@
+%p You are an admin user on RAMP. You can add an account or an individual photo to the stop list.
+
+%table.detail
+  %caption Stopped for a specific MP
+  %thead
+    %tr
+      %th Thumbnail
+      %th MP
+      %th Action
+  %tbody
+  - @stoplist_mp_photos.each do |stopped|
+    %tr
+      %td
+        %a{:href => "http://flickr.com/photos/#{stopped['author_id']}/#{stopped['photo_id']}"}
+          %img{ :src => "http://farm#{stopped["flickr_farm"]}.static.flickr.com/#{stopped["flickr_server"]}/#{stopped["photo_id"]}_#{stopped["flickr_secret"]}_s.jpg" }
+      %td
+        %a{:href => "http://flickr.com/photos/#{stopped['author_id']}/#{stopped['photo_id']}"}= stopped["name"]
+      %td
+        &lt;&lt;link goes here&gt;&gt;
+        
+%br

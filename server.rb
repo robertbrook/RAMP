@@ -399,21 +399,51 @@ get "/admin/add_to_stoplist/user/:user_id" do
 end
 
 get "/admin/stoplist" do
+  do_auth() 
+  
+  haml :admin_stoplist
+end
+
+get "/admin/stoplist/accounts" do
   do_auth()
   
   collection = MONGO_DB.collection("stoplist")
-    
-  #hashes
-  @stoplist_photos = collection.find({"photo_id" =>  /.+/, "name" => nil})
-  @stoplist_mp_photos = collection.find({"photo_id" =>  /.+/, "name" => /.+/})
-
-  #arrays
+  
   userlist = collection.find({"users" =>  /.+/}).next_document()
   @stoplist_users = userlist["users"]
   @stoplist_usernames = userlist["users_names"]
+  
+  haml :admin_stoplist_accounts
+end
+
+get "/admin/stoplist/tags" do
+  do_auth()
+  
+  collection = MONGO_DB.collection("stoplist")
+  
   @stoplist_tags = collection.find({"tags" =>  /.+/}).next_document()["tags"]
   
-  haml :admin_stoplist
+  haml :admin_stoplist_tags
+end
+
+get "/admin/stoplist/photos" do
+  do_auth()
+  
+  collection = MONGO_DB.collection("stoplist")
+  
+  @stoplist_photos = collection.find({"photo_id" =>  /.+/, "name" => nil})
+  
+  haml :admin_stoplist_photos
+end
+
+get "/admin/stoplist/mp_photos" do
+  do_auth()
+  
+  collection = MONGO_DB.collection("stoplist")
+  
+  @stoplist_mp_photos = collection.find({"photo_id" =>  /.+/, "name" => /.+/}) 
+  
+  haml :admin_stoplist_mp_photos
 end
 
 get '/login' do
