@@ -16,6 +16,7 @@
       %td
         %a{:href => "http://flickr.com/photos/#{stopped['author_id']}/#{stopped['photo_id']}"}= stopped["name"]
       %td
-        &lt;&lt;link goes here&gt;&gt;
+        %a{:href => "/admin/unstop/mp_photo/#{MP.format_name_for_url(stopped['name'])}/#{stopped['photo_id']}"}
+          Unstop
         
 %br

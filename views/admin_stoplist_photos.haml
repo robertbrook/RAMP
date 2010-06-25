@@ -13,6 +13,7 @@
         %a{:href => "http://flickr.com/photos/#{stopped['author_id']}/#{stopped['photo_id']}"}
           %img{ :src => "http://farm#{stopped["flickr_farm"]}.static.flickr.com/#{stopped["flickr_server"]}/#{stopped["photo_id"]}_#{stopped["flickr_secret"]}_s.jpg" }
       %td
-        &lt;&lt;link goes here&gt;&gt;
+        %a{:href => "/admin/unstop/photo/#{stopped["photo_id"]}"}
+          Unstop
         
 %br

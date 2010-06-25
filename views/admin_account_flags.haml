@@ -26,7 +26,7 @@
         %a{:href => "http://flickr.com/photos/#{flagged['author_id']}/#{flagged['photo_id']}"}
           %img{ :alt => "#{flagged['name']}", :src => "http://farm#{flagged["flickr_farm"]}.static.flickr.com/#{flagged["flickr_server"]}/#{flagged["photo_id"]}_#{flagged["flickr_secret"]}_s.jpg" }
       %td
-        %a{:href => "/admin/mp/#{flagged['name'].downcase().gsub("-","--").gsub(" ","-")}"} "#{flagged["name"]}"
+        %a{:href => "/admin/mp/#{MP.format_name_for_url(flagged['name'])}"} "#{flagged["name"]}"
       %td
         %a{:href => "/admin/unflag/photo/#{flagged["photo_id"]}?return=/admin/account/#{flagged['author_id']}"} Unflag
       %td

@@ -53,6 +53,10 @@ class MP
   
   MONGO_DB = get_mongo_connection()
   
+  def self.format_name_for_url(name)
+    name.downcase().gsub("-","--").gsub(" ","-")
+  end
+  
   def twfy_photo
     query = "select * from html where url='#{self.twfy_url}' and xpath='//p[@class=\"person\"]/img'"
     result = TOKEN.request(:get, "/v1/yql?q=#{OAuth::Helper.escape(query)}&callback=&format=json")

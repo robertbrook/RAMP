@@ -240,18 +240,8 @@ get "/admin/account/:account_id" do
 end
 
 get "/admin/mp/:mp_name" do
-  mp_name = params[:mp_name]
-  display_name = mp_name.gsub("-", " ")
-  display_name.gsub!("  ", "-")
-  
-  a2 = []
-  a1 = display_name.split(" ")
-  a1.each do |name|
-    a2 << name.capitalize
-  end
-  
-  @mp_name = a2.join(" ")
-  
+  @mp_name = mp_name_from_querystring(params[:mp_name])
+    
   coll = MONGO_DB.collection("flags")
   flagged = coll.group(["name", "photo_id", "author_id", "author_name", "flickr_secret", "flickr_farm", "flickr_server"], {"name" => "#{@mp_name}"}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
   @flagged = flagged.sort_by { |x| -x["flags"] }
@@ -319,17 +309,7 @@ get "/admin/add_to_stoplist/mp_photo/:mp_name/:photo_id" do
   
   coll = MONGO_DB.collection("stoplist")
   
-  mp_name = params[:mp_name]
-  mp_name.gsub!("-", " ")
-  mp_name.gsub!("  ", "-")
-  
-  a2 = []
-  a1 = mp_name.split(" ")
-  a1.each do |name|
-    a2 << name.capitalize
-  end
-  
-  mp_name = a2.join(" ")
+  mp_name = mp_name_from_querystring(params[:mp_name])
   
   photo_id =  params[:photo_id]
   
@@ -446,6 +426,29 @@ get "/admin/stoplist/mp_photos" do
   haml :admin_stoplist_mp_photos
 end
 
+get "/admin/unstop/photo/:photo_id" do
+  do_auth()
+  
+  photo_id = params[:photo_id]
+  
+  collection = MONGO_DB.collection("stoplist")
+  collection.remove("photo_id" => photo_id)
+  
+  redirect "/admin/stoplist/photos"
+end
+
+get "/admin/unstop/mp_photo/:mp_name/:photo_id" do
+  do_auth()
+  
+  mp_name = mp_name_from_querystring(params[:mp_name])
+  photo_id = params[:photo_id]
+  
+  collection = MONGO_DB.collection("stoplist")
+  collection.remove({"photo_id" => photo_id, "name" => "#{mp_name}"})
+  
+  redirect "/admin/stoplist/mp_photos"
+end
+
 get '/login' do
   haml :admin_login
 end
@@ -529,4 +532,27 @@ private
     
     flag = {"name" => "#{mp_name}", "photo_id" => "#{photo_id}", "author_id" => "#{user_id}", "author_name" => "#{user_name}", "flickr_farm" => "#{farm}", "flickr_server" => "#{server}", "flickr_secret" => "#{secret}"}
     coll.insert(flag)
+  end
+  
+  def mp_name_from_querystring(param_name)
+    name = param_name.gsub("-", " ")
+    name.gsub!("  ", "-")
+
+    names = []
+    parts = name.split(" ")
+    parts.each do |part|
+      names << part.capitalize
+    end
+    
+    name = names.join(" ")
+    
+    if name =~ /\ Mc([a-z])/
+      name = name.gsub("Mc#{$1}", "Mc#{$1.upcase()}")
+    end
+    
+    if name =~ /\ Mac([a-z])/
+      name = name.gsub("Mac#{$1}", "Mac#{$1.upcase()}")
+    end
+    
+    name
   end
