@@ -1,22 +1,17 @@
 - if @photos.size == 0
-  #notfound
-    %p There are no photos tagged <strong>#{@random_mp.json["name"]}</strong> on Flickr. You can <a href="http://www.flickr.com/photos/upload/">upload a photo</a>, or tag a public photo with that MP's name.
-    =partial(:vcard, :layout => false, :collection => [@random_mp.json] )
-    %p <a href='/'>Ok, show me another</a>
+  %p There are no photos tagged <strong>#{@random_mp.json["name"]}</strong> on Flickr. You can <a href="http://www.flickr.com/photos/upload/">upload a photo</a>, or tag a public photo with that MP's name.
+  =partial(:vcard, :layout => false, :collection => [@random_mp.json] )
+  %p <a href='/'>Ok, show me another</a>
 - else
-  .buttons
-    - @mps.each do |mp|
-      .guess 
-        %form{ :method => 'post', :action => '/answer' }
-          %input{ :type => 'submit', :name => 'answer', :value => "#{mp["name"]}, #{mp["party"]} MP for #{mp["constituency"]}"}
-          %input{ :type => 'hidden', :name => 'guess', :value => "#{mp['number']}" }
-          %input{ :type => 'hidden', :name => 'status', :value => "#{@status}" }
+  - @mps.each do |mp|
+    %form{ :method => "post", :action => "/answer" }
+      %input{ :type => 'submit', :name => 'answer', :value => "#{mp["name"]}, #{mp["party"]} MP for #{mp["constituency"]}"}
+      %input{ :type => 'hidden', :name => 'guess', :value => "#{mp['number']}" }
+      %input{ :type => 'hidden', :name => 'status', :value => "#{@status}" }
   %div
     %p <a href='/'>Pass, show me another</a>
     %div
-      %center
       - for photo in @photos
-        / = photo.inspect
         %figure
           .mp_image
             = '<a href="http://www.flickr.com/photos/' + photo["owner"]["nsid"].to_s + '/' + photo["id"].to_s + '"><img src="http://farm' + photo["farm"].to_s + '.static.flickr.com/' + photo["server"].to_s + '/' + photo["id"].to_s + '_' + photo["secret"].to_s + '.jpg" alt="' + photo["title"].to_s + '"/></a>'
@@ -25,8 +20,7 @@
             &mdash;
             = photo["owner"]["username"]
           -if @flagged and @flagged.include?(photo["id"])
-            .flagged
-              This photo has been flagged
+            [Flagged]
           -else
             %form{ :method => 'post', :action => '/' }
               %input{ :type => 'submit', :name => 'flag', :value => 'MP not in photo' }
