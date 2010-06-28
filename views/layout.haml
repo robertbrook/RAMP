@@ -1,13 +1,14 @@
-%html{:profile => "http://microformats.org/profile/hcard"}
+%html
   %head
     %title Recognise An MP?
     %link{:type => "text/css", :rel => "stylesheet", :href => "/stylesheets/styles.css"}
   %body
-    .container
-      %h1 Recognise An MP?
-      - unless @is_admin
-        %p.score #{session[:attempts]} photos, #{session[:passes]} passes, #{session[:correct]} correct
-      = yield
+    #header 
+      Recognise An MP?
+    - unless @is_admin
+      #score #{session[:attempts]} photos, #{session[:passes]} passes, #{session[:correct]} correct
+    = yield
+    #footer
       - if request.path_info != "/about"
-        #footer <a href="/about">More about this site</a>.    
-      
+        About RAMP. <a href="about">Sources. Contact. Code.</a>   
+           
