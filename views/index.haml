@@ -1,7 +1,6 @@
 - if @photos.size == 0
   %p There are no photos tagged <strong>#{@random_mp.json["name"]}</strong> on Flickr. You can <a href="http://www.flickr.com/photos/upload/">upload a photo</a>, or tag a public photo with that MP's name.
   =partial(:vcard, :layout => false, :collection => [@random_mp.json] )
-  %p <a href='/'>Ok, show me another</a>
 - else
   - @mps.each do |mp|
     %form{ :method => "post", :action => "/answer" }
@@ -9,7 +8,6 @@
       %input{ :type => 'hidden', :name => 'guess', :value => "#{mp['number']}" }
       %input{ :type => 'hidden', :name => 'status', :value => "#{@status}" }
   %div
-    %p <a href='/'>Pass, show me another</a>
     %div
       - for photo in @photos
         %figure
