@@ -1,14 +1,12 @@
 %html
   %head
-    %title Recognise An MP?
+    %title Recognise An MP
     %link{:type => "text/css", :rel => "stylesheet", :href => "/stylesheets/styles.css"}
   %body
-    #header 
-      Recognise An MP?
+    %p <a href="/">Recognise An MP</a>
     - unless @is_admin
       #score #{session[:attempts]} photos, #{session[:passes]} passes, #{session[:correct]} correct
     = yield
-    #footer
-      - if request.path_info != "/about"
-        About RAMP. <a href="about">Sources. Contact. Code.</a>   
+    - if request.path_info != "/about"
+      About RAMP. <a href="about">Sources. Contact. Code.</a>   
            

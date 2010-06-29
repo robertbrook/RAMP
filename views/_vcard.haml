@@ -1,18 +1,2 @@
-.vcard
-  .n
-    = "#{vcard['name']}"
-  .role.title
-    MP
-  .adr
-    .region.locality
-      = "#{vcard['constituency']}"
-  .org
-    .organisation-name
-      = "#{vcard['party']}"
+= "#{vcard['name']}, the #{vcard['party']} MP for #{vcard['constituency']}"
   
-    %p
-      Read more about this MP:
-      %br
-      %a{:href => "#{vcard['twfy_url']}" } They Work For You
-      %br
-      %a{:href => "#{vcard['wikipedia_url']}" } Wikipedia

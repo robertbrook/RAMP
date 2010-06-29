@@ -1,14 +1,7 @@
 - if @guess == @answer
-  %h2 Correct!
+  %p Correct: it was …
 - else
-  %h2 Sorry!
-  %p
-    You chose #{@chosen.name}
-
-%p
-  It was #{@mp.json['name']}
-
+  %p Sorry. You chose #{@chosen.name}, it was …
 %p
   =partial(:vcard, :layout => false, :collection => [@mp.json] )
 
-%p <a href='/'>Ok, show me another</a>
