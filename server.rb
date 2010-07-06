@@ -475,8 +475,9 @@ end
 private
   def do_auth
     ip = @env["REMOTE_HOST"]
-    ip = @env["REMOTE_ADDR"] unless ip
     ip = @env["HTTP_X_REAL_IP"] unless ip
+    ip = @env["REMOTE_ADDR"] unless ip
+    
     authorize!(ip)
   end
   
