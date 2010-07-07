@@ -5,10 +5,11 @@
     %meta{:charset => "UTF-8"}
     %meta{:name => "viewport", :content => "width=device-width"}
   %body
-    %p <a href="/">Recognise An MP</a>
-    - unless @is_admin
-      #score #{session[:attempts]} photos, #{session[:passes]} passes, #{session[:correct]} correct
-    = yield
-    - if request.path_info != "/about"
-      About RAMP. <a href="about">Sources. Contact. Code.</a>   
+    .container
+      %p <a href="/">Recognise An MP</a>
+      - unless @is_admin
+        #score #{session[:attempts]} photos, #{session[:passes]} passes, #{session[:correct]} correct
+      = yield
+      - if request.path_info != "/about"
+        About RAMP. <a href="about">Sources. Contact. Code.</a>   
            
