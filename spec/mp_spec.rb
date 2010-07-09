@@ -122,4 +122,22 @@ describe "MP" do
       mp.fymp_url.should == "http://findyourmp.parliament.uk/constituencies/richmond-yorks"
     end
   end
+
+  describe "when asked for random_photo" do
+    it 'return a hash containing a single photo if passed 1' do
+      mp = MP.new("Dave Smith", "Test Party", "Gloucester", "http://example.com", 42)
+      mp.should_receive(:get_blocked_photo_list).and_return("")
+      mp.should_receive(:get_blocked_user_id_list).and_return("")
+      mp.should_receive(:get_blocked_tag_list).and_return("")
+      
+      response = mock(Net::HTTPOK)
+      response.stub(:body).and_return('{"query":{"count":"1", "created":"2010-07-09T03:39:06Z", "lang":"en-US", "results":{"photo":{"farm":"5", "id":"4765476919", "license":"0", "secret":"991d4fabd1", "server":"4074", "owner":{"nsid":"51760255@N05", "username":"Bill and Susan"},"title":"IMG00067-20100115-1826", "tags":null}}}}')
+      
+      token = mock(OAuth::AccessToken)
+      token.stub!(:request).and_return(response)
+      mp.should_receive(:yql_token).and_return(token)
+      
+      mp.random_photo.should == {"query"=>{"results"=>{"photo"=>{"title"=>"IMG00067-20100115-1826", "farm"=>"5", "license"=>"0", "tags"=>nil, "server"=>"4074", "id"=>"4765476919", "secret"=>"991d4fabd1", "owner"=>{"nsid"=>"51760255@N05", "username"=>"Bill and Susan"}}}, "count"=>"1", "lang"=>"en-US", "created"=>"2010-07-09T03:39:06Z"}}
+    end
+  end
 end
