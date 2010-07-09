@@ -10,30 +10,6 @@ class MP
   
   CACHE = Memcached.new()
   
-  def self.get_mongo_connection
-    if ENV['RACK_ENV'] && ENV['RACK_ENV'] == 'production'
-      db_name = ENV['MONGO_DB']
-      db_server = ENV['MONGO_SERVER']
-      db_port = ENV['MONGO_PORT']
-      db_user = ENV['MONGO_USER']
-      db_pass = ENV['MONGO_PASS']
-    else    
-      mongo_conf = YAML.load(File.read('config/virtualserver/mongo.yml'))
-      db_name = mongo_conf[:db]
-      db_server = mongo_conf[:server]
-      db_port = mongo_conf[:port]
-      db_user = mongo_conf[:user]
-      db_pass = mongo_conf[:pass]
-    end
-
-    db = Mongo::Connection.new(db_server, db_port).db(db_name)
-    db.authenticate(db_user, db_pass)
-    
-    return db
-  end
-  
-  MONGO_DB = get_mongo_connection()
-  
   def self.format_name_for_url(name)
     name.downcase().gsub("-","--").gsub(" ","-")
   end
@@ -45,6 +21,7 @@ class MP
     @twfy_url = twfy_url
     @number = number
     @yql_token = get_yql_access_token
+    @mongo_db = get_mongo_connection
   end
   
   def twfy_photo
@@ -125,7 +102,7 @@ class MP
   end
   
   def to_json
-    %Q|{"name":"#{name}","number":#{number},"party":"#{party}","constituency":"#{constituency}","twfy_url":"#{twfy_url}","twfy_photo":"#{twfy_photo}","wikipedia_url":"#{wikipedia_url}","wikipedia_photo":"#{wikipedia_photo}","fymp_url":"#{fymp_url}"}|
+    %Q|{"name":"#{name}", "number":#{number}, "party":"#{party}", "constituency":"#{constituency}", "twfy_url":"#{twfy_url}", "twfy_photo":"#{twfy_photo}", "wikipedia_url":"#{wikipedia_url}", "wikipedia_photo":"#{wikipedia_photo}", "fymp_url":"#{fymp_url}"}|
   end
 
   def lookup_flickr_photo_license
@@ -173,19 +150,19 @@ class MP
     end
     
     def get_blocked_tag_list
-      coll = MONGO_DB.collection("stoplist")
+      coll = mongo_db.collection("stoplist")
       results = coll.find("tags" => /.+/)
       results.next_document["tags"].join("|")
     end
     
     def get_blocked_user_id_list
-      coll = MONGO_DB.collection("stoplist")
+      coll = mongo_db.collection("stoplist")
       results = coll.find("users" => /.+/)
       results.next_document["users"].join("|")
     end
     
     def get_blocked_photo_list(mp_name)
-      coll = MONGO_DB.collection("stoplist")
+      coll = mongo_db.collection("stoplist")
       blocked_outright = coll.find({"photo_id" => /.+/, "name" => nil}).collect { |x| x["photo_id"] }
       blocked_for_mp = coll.find({"photo_id" => /.+/, "name" => mp_name}).collect { |x| x["photo_id"] }
       
@@ -239,5 +216,31 @@ class MP
         :site => "http://query.yahooapis.com"
 
       OAuth::AccessToken.new(consumer)
+    end
+    
+    def mongo_db
+      @mongo_db
+    end
+    
+    def get_mongo_connection
+      if ENV['RACK_ENV'] && ENV['RACK_ENV'] == 'production'
+        db_name = ENV['MONGO_DB']
+        db_server = ENV['MONGO_SERVER']
+        db_port = ENV['MONGO_PORT']
+        db_user = ENV['MONGO_USER']
+        db_pass = ENV['MONGO_PASS']
+      else    
+        mongo_conf = YAML.load(File.read('config/virtualserver/mongo.yml'))
+        db_name = mongo_conf[:db]
+        db_server = mongo_conf[:server]
+        db_port = mongo_conf[:port]
+        db_user = mongo_conf[:user]
+        db_pass = mongo_conf[:pass]
+      end
+
+      db = Mongo::Connection.new(db_server, db_port).db(db_name)
+      db.authenticate(db_user, db_pass)
+
+      return db
     end
 end
