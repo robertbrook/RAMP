@@ -1,32 +1,13 @@
 require 'rubygems'
 require 'json'
 require 'mongo'
+require 'oauth'
 require 'memcached'
 require 'yaml'
-require 'oauth'
 
 class MP
   attr_reader :name, :party, :constituency, :twfy_url, :number, :fymp_url
   
-  def self.get_yql_access_token
-    if ENV['RACK_ENV'] && ENV['RACK_ENV'] == 'production'
-      key = ENV['YQL_KEY']
-      secret = ENV['YQL_SECRET']
-    else
-      yql_conf = YAML.load(File.read('config/virtualserver/YQL.yml'))
-      key = yql_conf[:YQL_KEY]
-      secret = yql_conf[:YQL_SECRET]
-    end
-    
-    consumer = OAuth::Consumer.new \
-      key,
-      secret,
-      :site => "http://query.yahooapis.com"
-
-    OAuth::AccessToken.new(consumer)
-  end
-  
-  TOKEN = get_yql_access_token()
   CACHE = Memcached.new()
   
   def self.get_mongo_connection
@@ -59,7 +40,7 @@ class MP
   
   def twfy_photo
     query = "select * from html where url='#{self.twfy_url}' and xpath='//p[@class=\"person\"]/img'"
-    result = TOKEN.request(:get, "/v1/yql?q=#{OAuth::Helper.escape(query)}&callback=&format=json")
+    result = yql_token.request(:get, "/v1/yql?q=#{OAuth::Helper.escape(query)}&callback=&format=json")
     
     response = JSON.parse(result.body)
     
@@ -85,7 +66,7 @@ class MP
   
   def wikipedia_url
     query = "select title, url from search.web where query='site:en.wikipedia.org #{self.name.gsub("'", "%27")} MP #{self.constituency}' limit 1"
-    result = TOKEN.request(:get, "/v1/yql?q=#{OAuth::Helper.escape(query)}&callback=&format=json")
+    result = yql_token.request(:get, "/v1/yql?q=#{OAuth::Helper.escape(query)}&callback=&format=json")
     
     response = JSON.parse(result.body)
 
@@ -101,7 +82,7 @@ class MP
   
   def wikipedia_photo
     query = "select * from html where url='#{wikipedia_url}' and xpath='//table [@class=\"infobox vcard\"]/tr/td/a/img'"
-    result = TOKEN.request(:get, "/v1/yql?q=#{OAuth::Helper.escape(query)}&callback=&format=json")
+    result = yql_token.request(:get, "/v1/yql?q=#{OAuth::Helper.escape(query)}&callback=&format=json")
     
     response = JSON.parse(result.body)
     
@@ -129,6 +110,7 @@ class MP
     @constituency = format_constituency_name(constituency)
     @twfy_url = twfy_url
     @number = number
+    @yql_token = get_yql_access_token
   end
   
   def json
@@ -186,7 +168,7 @@ class MP
       
       query = "select title,license,farm,id,secret,server,owner.username,owner.nsid, tags from flickr.photos.info where photo_id in (select id from flickr.photos.search(30) where text\='#{search_term}' and id NOT MATCHES '#{blocked_photos}') and tags.tag.content NOT MATCHES '#{blocked_tags}' and owner.nsid NOT MATCHES '#{blocked_users}' and (title like '%#{search_term}%' or description like '%#{search_term}%' or tags.tag.content='#{tag_term}' or tags.tag.content='#{tag_term.downcase()}') limit #{qty}"
       
-      result = TOKEN.request(:get, "/v1/yql?q=#{OAuth::Helper.escape(query)}&callback=&format=json")
+      result = yql_token.request(:get, "/v1/yql?q=#{OAuth::Helper.escape(query)}&callback=&format=json")
       response = JSON.parse(result.body)
     end
     
@@ -235,5 +217,27 @@ class MP
         name = "#{$2.strip} #{$1.strip}"
       end
       name
+    end
+    
+    def yql_token
+      @yql_token
+    end
+    
+    def get_yql_access_token
+      if ENV['RACK_ENV'] && ENV['RACK_ENV'] == 'production'
+        key = ENV['YQL_KEY']
+        secret = ENV['YQL_SECRET']
+      else
+        yql_conf = YAML.load(File.read('config/virtualserver/YQL.yml'))
+        key = yql_conf[:YQL_KEY]
+        secret = yql_conf[:YQL_SECRET]
+      end
+
+      consumer = OAuth::Consumer.new \
+        key,
+        secret,
+        :site => "http://query.yahooapis.com"
+
+      OAuth::AccessToken.new(consumer)
     end
 end
