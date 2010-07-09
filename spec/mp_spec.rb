@@ -25,7 +25,7 @@ describe "MP" do
     end
     
     it 'should return an image url where an image is found' do      
-      image_found_response = "{\"query\":{\"count\":\"1\",\"results\":{\"img\":{\"src\":\"/images/mps/11148.jpg\"}}}}"
+      image_found_response = '{"query":{"count":"1","results":{"img":{"src":"/images/mps/11148.jpg"}}}}'
       @response.stub!(:body).and_return(image_found_response)
       @token.stub!(:request).and_return(@response)
       @mp.should_receive(:yql_token).and_return(@token)
@@ -42,4 +42,31 @@ describe "MP" do
       @mp.twfy_photo.should == ""
     end
   end
+  
+  describe "when asked for wikipedia_url" do
+    before do
+      @mp = MP.new("Dave Smith", "Test Party", "Croydon West", "http://example.com", 42)
+      @token = mock(OAuth::AccessToken)
+      @response = mock(Net::HTTPOK)
+    end
+    
+    it 'should return an wikipedia url when a wikipedia entry is found' do
+      found_response = '{"query": {"count": "1","results": {"result": {"url": "http://en.wikipedia.org/wiki/Bob_Neill"}}}}'
+      @response.stub!(:body).and_return(found_response)
+      @token.stub!(:request).and_return(@response)
+      @mp.should_receive(:yql_token).and_return(@token)
+      
+      @mp.wikipedia_url.should == "http://en.wikipedia.org/wiki/Bob_Neill"
+    end
+    
+    it 'should return a blank string when no wikipedia entry is found' do
+      image_not_found_response = "{\"query\":{\"count\":\"0\"}}"
+      @response.stub!(:body).and_return(image_not_found_response)
+      @token.stub!(:request).and_return(@response)   
+      @mp.should_receive(:yql_token).and_return(@token)
+      
+      @mp.wikipedia_url.should == ""
+    end
+  end
+  
 end

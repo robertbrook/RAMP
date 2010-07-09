@@ -37,6 +37,15 @@ class MP
   def self.format_name_for_url(name)
     name.downcase().gsub("-","--").gsub(" ","-")
   end
+
+  def initialize(name, party, constituency, twfy_url, number)
+    @name = remove_initials(name)
+    @party = party
+    @constituency = format_constituency_name(constituency)
+    @twfy_url = twfy_url
+    @number = number
+    @yql_token = get_yql_access_token
+  end
   
   def twfy_photo
     query = "select * from html where url='#{self.twfy_url}' and xpath='//p[@class=\"person\"]/img'"
@@ -102,15 +111,6 @@ class MP
     end
     
     src    
-  end
- 
-  def initialize(name, party, constituency, twfy_url, number)
-    @name = remove_initials(name)
-    @party = party
-    @constituency = format_constituency_name(constituency)
-    @twfy_url = twfy_url
-    @number = number
-    @yql_token = get_yql_access_token
   end
   
   def json
