@@ -392,7 +392,7 @@ end
 get "/admin/stoplist/?" do
   do_auth() 
   
-  haml :'admin/stoplist'
+  haml :'admin/stoplist/index'
 end
 
 get "/admin/stoplist/accounts/?" do
@@ -404,7 +404,7 @@ get "/admin/stoplist/accounts/?" do
   @stoplist_users = userlist["users"]
   @stoplist_usernames = userlist["users_names"]
   
-  haml :'admin/stoplist_accounts'
+  haml :'admin/stoplist/accounts'
 end
 
 get "/admin/stoplist/tags/?" do
@@ -414,7 +414,7 @@ get "/admin/stoplist/tags/?" do
   
   @stoplist_tags = collection.find({"tags" =>  /.+/}).next_document()["tags"]
   
-  haml :'admin/stoplist_tags'
+  haml :'admin/stoplist/tags'
 end
 
 get "/admin/stoplist/photos/?" do
@@ -424,7 +424,7 @@ get "/admin/stoplist/photos/?" do
   
   @stoplist_photos = collection.find({"photo_id" =>  /.+/, "name" => nil})
   
-  haml :'admin/stoplist_photos'
+  haml :'admin/stoplist/photos'
 end
 
 get "/admin/stoplist/mp_photos/?" do
@@ -434,7 +434,7 @@ get "/admin/stoplist/mp_photos/?" do
   
   @stoplist_mp_photos = collection.find({"photo_id" =>  /.+/, "name" => /.+/}) 
   
-  haml :'admin/stoplist_mp_photos'
+  haml :'admin/stoplist/mp_photos'
 end
 
 get "/admin/unstop/photo/:photo_id/?" do
