@@ -29,7 +29,10 @@
       %td= flagged["flags"].to_i
       %td
         %a{:href => "/admin/mp/#{MP.format_name_for_url(flagged['name'])}"}= flagged["name"]
-
+        
+%br
+%a{:href => "admin/mp"} View list of all flagged MPs
+%br
 %hr
 
 %table.detail

@@ -220,6 +220,17 @@ get "/admin" do
   haml :admin
 end
 
+get "/admin/mp" do
+  do_auth()
+
+  coll = MONGO_DB.collection("flags")
+  
+  flags_by_mp = coll.group(["name"], {"name" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
+  @flags_by_mp = flags_by_mp.sort_by { |x| x["name"][x["name"].rindex(" ")+1..x["name"].length] }
+  
+  haml :admin_mps
+end
+
 get "/admin/account/:account_id" do
   @account_id = params[:account_id]
   
