@@ -228,7 +228,7 @@ get "/admin/mp/?" do
   flags_by_mp = coll.group(["name"], {"name" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
   @flags_by_mp = flags_by_mp.sort_by { |x| x["name"][x["name"].rindex(" ")+1..x["name"].length] }
   
-  haml :'admin/mps'
+  haml :'admin/mps/index'
 end
 
 get "/admin/account/:account_id/?" do
@@ -257,7 +257,7 @@ get "/admin/mp/:mp_name/?" do
   flagged = coll.group(["name", "photo_id", "author_id", "author_name", "flickr_secret", "flickr_farm", "flickr_server"], {"name" => "#{@mp_name}"}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
   @flagged = flagged.sort_by { |x| -x["flags"] }
   
-  haml :'admin/mp_flags'
+  haml :'admin/mp/flags'
 end
 
 get "/admin/unflag/photo/:photo_id/?" do
