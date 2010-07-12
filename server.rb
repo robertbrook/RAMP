@@ -217,7 +217,7 @@ get "/admin/?" do
   flags_by_photos = coll.group(["photo_id", "name", "author_id", "author_name", "flickr_secret", "flickr_farm", "flickr_server"], {"photo_id" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
   @flags_by_photos = flags_by_photos.sort_by { |x| -x["flags"] }
   
-  haml :admin
+  haml :'admin/index'
 end
 
 get "/admin/mp/?" do
@@ -228,7 +228,7 @@ get "/admin/mp/?" do
   flags_by_mp = coll.group(["name"], {"name" => /.+/}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
   @flags_by_mp = flags_by_mp.sort_by { |x| x["name"][x["name"].rindex(" ")+1..x["name"].length] }
   
-  haml :admin_mps
+  haml :'admin/mps'
 end
 
 get "/admin/account/:account_id/?" do
@@ -247,7 +247,7 @@ get "/admin/account/:account_id/?" do
   flagged = coll.group(["name", "photo_id", "author_id", "flickr_secret", "flickr_farm", "flickr_server"], {"author_id" => "#{@account_id}"}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
   @flagged = flagged.sort_by { |x| -x["flags"] }
   
-  haml :admin_account_flags
+  haml :'admin/account_flags'
 end
 
 get "/admin/mp/:mp_name/?" do
@@ -257,7 +257,7 @@ get "/admin/mp/:mp_name/?" do
   flagged = coll.group(["name", "photo_id", "author_id", "author_name", "flickr_secret", "flickr_farm", "flickr_server"], {"name" => "#{@mp_name}"}, { "flags" => 0 }, "function(doc,rtn) { rtn.flags += 1; }")
   @flagged = flagged.sort_by { |x| -x["flags"] }
   
-  haml :admin_mp_flags
+  haml :'admin/mp_flags'
 end
 
 get "/admin/unflag/photo/:photo_id/?" do
@@ -392,7 +392,7 @@ end
 get "/admin/stoplist/?" do
   do_auth() 
   
-  haml :admin_stoplist
+  haml :'admin/stoplist'
 end
 
 get "/admin/stoplist/accounts/?" do
@@ -404,7 +404,7 @@ get "/admin/stoplist/accounts/?" do
   @stoplist_users = userlist["users"]
   @stoplist_usernames = userlist["users_names"]
   
-  haml :admin_stoplist_accounts
+  haml :'admin/stoplist_accounts'
 end
 
 get "/admin/stoplist/tags/?" do
@@ -414,7 +414,7 @@ get "/admin/stoplist/tags/?" do
   
   @stoplist_tags = collection.find({"tags" =>  /.+/}).next_document()["tags"]
   
-  haml :admin_stoplist_tags
+  haml :'admin/stoplist_tags'
 end
 
 get "/admin/stoplist/photos/?" do
@@ -424,7 +424,7 @@ get "/admin/stoplist/photos/?" do
   
   @stoplist_photos = collection.find({"photo_id" =>  /.+/, "name" => nil})
   
-  haml :admin_stoplist_photos
+  haml :'admin/stoplist_photos'
 end
 
 get "/admin/stoplist/mp_photos/?" do
@@ -434,7 +434,7 @@ get "/admin/stoplist/mp_photos/?" do
   
   @stoplist_mp_photos = collection.find({"photo_id" =>  /.+/, "name" => /.+/}) 
   
-  haml :admin_stoplist_mp_photos
+  haml :'admin/stoplist_mp_photos'
 end
 
 get "/admin/unstop/photo/:photo_id/?" do
@@ -461,7 +461,7 @@ get "/admin/unstop/mp_photo/:mp_name/:photo_id/?" do
 end
 
 get '/login/?' do
-  haml :admin_login
+  haml :login
 end
 
 post '/login' do
