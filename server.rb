@@ -199,11 +199,11 @@ post "/answer" do
   haml :answer
 end
 
-get "/about" do
+get "/about/?" do
   haml :about
 end
 
-get "/admin" do
+get "/admin/?" do
   do_auth()
 
   coll = MONGO_DB.collection("flags")
@@ -220,7 +220,7 @@ get "/admin" do
   haml :admin
 end
 
-get "/admin/mp" do
+get "/admin/mp/?" do
   do_auth()
 
   coll = MONGO_DB.collection("flags")
@@ -231,7 +231,7 @@ get "/admin/mp" do
   haml :admin_mps
 end
 
-get "/admin/account/:account_id" do
+get "/admin/account/:account_id/?" do
   @account_id = params[:account_id]
   
   coll = MONGO_DB.collection("flags")
@@ -250,7 +250,7 @@ get "/admin/account/:account_id" do
   haml :admin_account_flags
 end
 
-get "/admin/mp/:mp_name" do
+get "/admin/mp/:mp_name/?" do
   @mp_name = mp_name_from_querystring(params[:mp_name])
     
   coll = MONGO_DB.collection("flags")
@@ -260,7 +260,7 @@ get "/admin/mp/:mp_name" do
   haml :admin_mp_flags
 end
 
-get "/admin/unflag/photo/:photo_id" do
+get "/admin/unflag/photo/:photo_id/?" do
   do_auth()
   
   coll = MONGO_DB.collection("flags")
@@ -274,7 +274,7 @@ get "/admin/unflag/photo/:photo_id" do
   end
 end
 
-get "/admin/unflag/user/:user_id" do
+get "/admin/unflag/user/:user_id/?" do
   do_auth()
   
   coll = MONGO_DB.collection("flags")
@@ -288,7 +288,7 @@ get "/admin/unflag/user/:user_id" do
   end
 end
 
-get "/admin/add_to_stoplist/photo/:photo_id" do
+get "/admin/add_to_stoplist/photo/:photo_id/?" do
   do_auth()
   
   photo_id =  params[:photo_id]
@@ -315,7 +315,7 @@ get "/admin/add_to_stoplist/photo/:photo_id" do
   end
 end
 
-get "/admin/add_to_stoplist/mp_photo/:mp_name/:photo_id" do
+get "/admin/add_to_stoplist/mp_photo/:mp_name/:photo_id/?" do
   do_auth()
   
   coll = MONGO_DB.collection("stoplist")
@@ -346,7 +346,7 @@ get "/admin/add_to_stoplist/mp_photo/:mp_name/:photo_id" do
   end
 end
 
-get "/admin/add_to_stoplist/user/:user_id" do
+get "/admin/add_to_stoplist/user/:user_id/?" do
   do_auth()
   
   coll = MONGO_DB.collection("stoplist")
@@ -389,13 +389,13 @@ get "/admin/add_to_stoplist/user/:user_id" do
   end
 end
 
-get "/admin/stoplist" do
+get "/admin/stoplist/?" do
   do_auth() 
   
   haml :admin_stoplist
 end
 
-get "/admin/stoplist/accounts" do
+get "/admin/stoplist/accounts/?" do
   do_auth()
   
   collection = MONGO_DB.collection("stoplist")
@@ -407,7 +407,7 @@ get "/admin/stoplist/accounts" do
   haml :admin_stoplist_accounts
 end
 
-get "/admin/stoplist/tags" do
+get "/admin/stoplist/tags/?" do
   do_auth()
   
   collection = MONGO_DB.collection("stoplist")
@@ -417,7 +417,7 @@ get "/admin/stoplist/tags" do
   haml :admin_stoplist_tags
 end
 
-get "/admin/stoplist/photos" do
+get "/admin/stoplist/photos/?" do
   do_auth()
   
   collection = MONGO_DB.collection("stoplist")
@@ -427,7 +427,7 @@ get "/admin/stoplist/photos" do
   haml :admin_stoplist_photos
 end
 
-get "/admin/stoplist/mp_photos" do
+get "/admin/stoplist/mp_photos/?" do
   do_auth()
   
   collection = MONGO_DB.collection("stoplist")
@@ -437,7 +437,7 @@ get "/admin/stoplist/mp_photos" do
   haml :admin_stoplist_mp_photos
 end
 
-get "/admin/unstop/photo/:photo_id" do
+get "/admin/unstop/photo/:photo_id/?" do
   do_auth()
   
   photo_id = params[:photo_id]
@@ -448,7 +448,7 @@ get "/admin/unstop/photo/:photo_id" do
   redirect "/admin/stoplist/photos"
 end
 
-get "/admin/unstop/mp_photo/:mp_name/:photo_id" do
+get "/admin/unstop/mp_photo/:mp_name/:photo_id/?" do
   do_auth()
   
   mp_name = mp_name_from_querystring(params[:mp_name])
@@ -460,7 +460,7 @@ get "/admin/unstop/mp_photo/:mp_name/:photo_id" do
   redirect "/admin/stoplist/mp_photos"
 end
 
-get '/login' do
+get '/login/?' do
   haml :admin_login
 end
 
