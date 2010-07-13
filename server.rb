@@ -10,6 +10,7 @@ require 'htmlentities'
 require 'lib/MP'
 require 'helpers/partials'
 require 'helpers/auth'
+require 'helpers/text_helper'
 
 enable :sessions
 
@@ -480,6 +481,12 @@ post '/login' do
   else
     session[:authorized] = false
     redirect '/login'
+  end
+end
+
+helpers do
+  def pluralize(count, singular, plural = nil)
+    "#{count || 0} " + ((count == 1 || count =~ /^1(\.0+)?$/) ? singular : (plural || singular.pluralize))
   end
 end
 
