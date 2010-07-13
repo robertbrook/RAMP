@@ -10,7 +10,6 @@ require 'htmlentities'
 require 'lib/MP'
 require 'helpers/partials'
 require 'helpers/auth'
-require 'helpers/text_helper'
 
 enable :sessions
 

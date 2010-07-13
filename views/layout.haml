@@ -5,11 +5,9 @@
     %meta{:charset => "UTF-8"}
     %meta{:name => "viewport", :content => "width=device-width"}
   %body
-    .container
-      %p <a href="/">Recognise An MP</a>
-      - unless @is_admin
-        #score #{pluralize(session[:attempts], "photo", "photos")}, #{pluralize(session[:passes], "pass", "passes")}, #{session[:correct]} correct
-      = yield
-      - if request.path_info != "/about"
-        About RAMP. <a href="about">Sources. Contact. Code.</a>   
+    #header #{pluralize(session[:attempts], "photo", "photos")}, #{pluralize(session[:passes], "pass", "passes")}, #{session[:correct]} correct
+    #section= yield
+    #footer <a href="/">Recognise An MP</a>
+    - if request.path_info != "/about"
+      <a href="about">Sources. Contact. Code.</a>
            

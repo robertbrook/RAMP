@@ -4,24 +4,27 @@
 - else
   - @mps.each do |mp|
     %form{ :method => "post", :action => "/answer" }
-      %input{ :type => 'submit', :name => 'answer', :value => "#{mp["name"]}, #{mp["party"]} MP for #{mp["constituency"]}"}
+      %input.button{ :type => 'submit', :name => 'answer', :value => "#{mp["name"]}"}
+      %br
+      %label{ :for => 'answer' }= "#{mp["party"]} MP for #{mp["constituency"]}"
       %input{ :type => 'hidden', :name => 'guess', :value => "#{mp['number']}" }
       %input{ :type => 'hidden', :name => 'status', :value => "#{@status}" }
   %div
     %div
       - for photo in @photos
         %figure
-          .mp_image
-            = '<a href="http://www.flickr.com/photos/' + photo["owner"]["nsid"].to_s + '/' + photo["id"].to_s + '"><img src="http://farm' + photo["farm"].to_s + '.static.flickr.com/' + photo["server"].to_s + '/' + photo["id"].to_s + '_' + photo["secret"].to_s + '.jpg" alt=""/></a>'
+          = '<a href="http://www.flickr.com/photos/' + photo["owner"]["nsid"].to_s + '/' + photo["id"].to_s + '"><img src="http://farm' + photo["farm"].to_s + '.static.flickr.com/' + photo["server"].to_s + '/' + photo["id"].to_s + '_' + photo["secret"].to_s + '.jpg" alt=""/></a>'
+          %br
           %figcaption{:rel => "license"}
             = @random_mp.lookup_flickr_photo_license[photo["license"].to_i]
             &mdash;
             = photo["owner"]["username"]
           -if @flagged and @flagged.include?(photo["id"])
-            [Flagged]
+            %span.flagged
+              [Flagged]
           -else
-            %form{ :method => 'post', :action => '/' }
-              %input{ :type => 'submit', :name => 'flag', :value => 'MP not in photo' }
+            %form{ :method => 'post', :action => '/', :class => 'flagged' }
+              %input{ :type => 'submit', :name => 'flag', :value => 'Flag photo' }
               %input{ :type => 'hidden', :name => 'photo_id', :value => photo["id"]}
               %input{ :type => 'hidden', :name => 'user_id', :value => photo["owner"]["nsid"]}
               %input{ :type => 'hidden', :name => 'user_name', :value => photo["owner"]["username"]}
