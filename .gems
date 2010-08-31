@@ -5,4 +5,4 @@ mongo
 bson
 bson_ext
 htmlentities
-ruby-web-search
+linkingpaths-ruby-web-search  --source gems.github.com
