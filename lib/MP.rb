@@ -69,10 +69,11 @@ class MP
     return "" unless response["query"]["results"]
     
     return "" if response["query"]["count"] == "0"
+    return "" if response["query"]["count"] == 0
     
-    if response["query"]["count"] == "1"
+    if response["query"]["count"] == 1
       src = response["query"]["results"]["img"]["src"]
-    else 
+    else
       src = response["query"]["results"]["img"][0]["src"]
     end
     
