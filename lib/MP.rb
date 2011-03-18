@@ -3,6 +3,7 @@ require 'json'
 require 'mongo'
 require 'oauth'
 require 'memcached'
+require 'ruby-web-search'
 require 'yaml'
 
 class MP
@@ -51,19 +52,11 @@ class MP
   end
   
   def wikipedia_url
-    query = "select title, url from search.web where query='site:en.wikipedia.org #{self.name.gsub("'", "%27")} MP #{self.constituency}' limit 1"
-    result = yql_token.request(:get, "/v1/yql?q=#{OAuth::Helper.escape(query)}&callback=&format=json")
-    
-    response = JSON.parse(result.body)
-
-    if response.nil? or response.is_a?(String)
+    response = RubyWebSearch::Google.search(:query => "site:en.wikipedia.org #{self.name.gsub("'", "%27")} MP #{Time.now.year()}", :size => 1)
+    if response.nil? or response.results.nil? or response.results.first.nil?
       return ""
     end
-  
-    return "" unless response["query"]
-    return "" unless response["query"]["results"]
-    
-    return response["query"]["results"]["result"]["url"]
+    response.results.first[:url]
   end
   
   def wikipedia_photo
@@ -76,10 +69,11 @@ class MP
     return "" unless response["query"]["results"]
     
     return "" if response["query"]["count"] == "0"
+    return "" if response["query"]["count"] == 0
     
-    if response["query"]["count"] == "1"
+    if response["query"]["count"] == 1
       src = response["query"]["results"]["img"]["src"]
-    else 
+    else
       src = response["query"]["results"]["img"][0]["src"]
     end
     

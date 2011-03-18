@@ -1,0 +1,18 @@
+%p You are an admin user on RAMP. You can add an account or an individual photo to the stop list.
+
+%hr
+
+%table{:width => "60%"}
+  %caption Images flagged for an MP
+  %thead
+    %tr
+      %th Flags
+      %th MP
+  %tbody
+  - @flags_by_mp.each do |flagged|
+    %tr
+      %td= flagged["flags"].to_i
+      %td
+        %a{:href => "/admin/mp/#{MP.format_name_for_url(flagged['name'])}"}= flagged["name"]
+
+%br
