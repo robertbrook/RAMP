@@ -14,6 +14,7 @@ Person ID,First name,Last name,Party,Constituency,URI
 11427,David,Anderson,Labour,Blaydon,http://www.theyworkforyou.com/mp/david_anderson/blaydon
 24864,Stuart,Andrew,Conservative,Pudsey,http://www.theyworkforyou.com/mp/stuart_andrew/pudsey
 10013,James,Arbuthnot,Conservative,North East Hampshire,http://www.theyworkforyou.com/mp/james_arbuthnot/north_east_hampshire
+25120,Jonathan,Ashworth,Labour,Leicester South,http://www.theyworkforyou.com/mp/jonathan_ashworth/leicester_south
 11553,Ian,Austin,Labour,Dudley North,http://www.theyworkforyou.com/mp/ian_austin/dudley_north
 10707,Richard,Bacon,Conservative,South Norfolk,http://www.theyworkforyou.com/mp/richard_bacon/south_norfolk
 24833,Louise,Bagshawe,Conservative,Corby,http://www.theyworkforyou.com/mp/louise_bagshawe/corby
@@ -553,7 +554,6 @@ Person ID,First name,Last name,Party,Constituency,URI
 10552,Robert,Smith,Liberal Democrat,West Aberdeenshire and Kincardine,http://www.theyworkforyou.com/mp/robert_smith/west_aberdeenshire_and_kincardine
 10555,Nicholas,Soames,Conservative,Mid Sussex,http://www.theyworkforyou.com/mp/nicholas_soames/mid_sussex
 24772,Anna,Soubry,Conservative,Broxtowe,http://www.theyworkforyou.com/mp/anna_soubry/broxtowe
-11675,Peter,Soulsby,Labour,Leicester South,http://www.theyworkforyou.com/mp/peter_soulsby/leicester_south
 10558,John,Spellar,Labour,Warley,http://www.theyworkforyou.com/mp/john_spellar/warley
 10559,Caroline,Spelman,Conservative,Meriden,http://www.theyworkforyou.com/mp/caroline_spelman/meriden
 24909,Mark,Spencer,Conservative,Sherwood,http://www.theyworkforyou.com/mp/mark_spencer/sherwood
